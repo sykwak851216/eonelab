@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.orderwork.OrderWorkMapper">
+
+	<sql id="orderWorkSelectMapper">
+		SELECT
+			  work_id
+			, order_id
+			, buffer_id
+			, in_out_type_cd
+			, plan_no
+			, inquiry_qty
+			, tray_id
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, work_status_cd
+			, reg_dt
+			, mod_dt
+		FROM wmd_order_work
+	</sql>
+
+
+	<sql id="orderWorkListWhereMapper">
+		<where>
+			<if test=" param != null and param.workId != null and param.workId != '' ">
+				AND work_id = #{param.workId}
+			</if>
+			<if test=" param != null and param.orderId != null and param.orderId != '' ">
+				AND order_id = #{param.orderId}
+			</if>
+			<if test=" param != null and param.bufferId != null and param.bufferId != '' ">
+				AND buffer_id = #{param.bufferId}
+			</if>
+			<if test=" param != null and param.inOutTypeCd != null and param.inOutTypeCd != '' ">
+				AND in_out_type_cd = #{param.inOutTypeCd}
+			</if>
+			<if test=" param != null and param.planNo != null and param.planNo != '' ">
+				AND plan_no = #{param.planNo}
+			</if>
+			<if test=" param != null and param.trayId != null and param.trayId != '' ">
+				AND tray_id = #{param.trayId}
+			</if>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.inquiryQty != null ">
+				AND inquiry_qty = #{param.inquiryQty}
+			</if>
+			<if test=" param != null and param.rackCellXAxis != null ">
+				AND rack_cell_x_axis = #{param.rackCellXAxis}
+			</if>
+			<if test=" param != null and param.rackCellYAxis != null ">
+				AND rack_cell_y_axis = #{param.rackCellYAxis}
+			</if>
+			<if test=" param != null and param.workStatusCd != null and param.workStatusCd != '' ">
+				AND work_status_cd = #{param.workStatusCd}
+			</if>
+			<if test=" param != null and param.orderGroupId != null and param.orderGroupId != '' ">
+				AND order_id IN (SELECT order_id FROM wmd_order WHERE order_group_id = #{param.orderGroupId})
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectOrderWorkList" resultType="com.s3s.solutions.eone.service.wmd.orderwork.OrderWorkVO">
+		/* OrderWorkMapper-postgresql selectOrderWorkList */
+		<include refid="orderWorkSelectMapper" />
+		<include refid="orderWorkListWhereMapper" />
+		ORDER BY mod_dt ASC
+	</select>
+	
+	<select id="selectDetailOrderWorkByTrayId" resultType="com.s3s.solutions.eone.service.wmd.orderwork.OrderWorkVO">
+		/* OrderWorkMapper-postgresql selectOrderWorkList */
+		<include refid="orderWorkSelectMapper" />
+		<include refid="orderWorkListWhereMapper" />
+	</select>
+
+</mapper>

@@ -1,0 +1,43 @@
+spring:
+  profiles:
+    active:
+    - swagger
+    - auth
+    - dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL92Dialect
+server:
+  port: 8080
+  servlet:
+    context-path: /eone
+  properties:
+    alarm-yn: N
+    simulation-yn: N
+    app-menu-yn: N
+    bookmark-yn: N
+    dmw-yn: Y
+    file-download-path: C:/imc/doc/report
+    file-jxls-template-path: C:/YUDO-SFP/solutions/eone
+    http-interface-yn: N
+    locale: ko
+    memory-load-yn: Y
+    menu-site-code: EONE
+    menu-use-db-yn: Y
+    site-code: SFP2.3
+    site-name: EONE
+    site-version: 1.0
+    task-yn: N
+    theme: basic
+    view-menu-location: tmpage
+security:
+  properties:  
+    passFolder: 
+    - '/apps/sys/common'
+    - '/apps/sys/variable'
+    - '/solutions/eone/pop'
+    - '/solutions/eone/wmd'
+# 로그인을 활성화 했을 경우 제외 시키고 싶은 폴더 추가

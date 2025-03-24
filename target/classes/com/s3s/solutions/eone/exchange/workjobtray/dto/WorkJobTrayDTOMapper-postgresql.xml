@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.exchange.workjobtray.WorkJobTrayMapper">
+	<sql id="workJobTraySelect">
+		SELECT
+			  if_work_tray_id
+			, if_id
+			, ref_if_id
+			, tray_id
+			, if_work_type_cd
+			, result_yn
+			, emergency_yn
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, ent_ymd
+			, remark
+			, seq
+		FROM wmd_interface_work_tray
+	</sql>
+
+
+	<sql id="workJobTrayListWhere">
+		<where>
+			<if test=" param != null and param.ifWorkTrayId != null and param.ifWorkTrayId != '' ">
+				AND if_work_tray_id = #{param.ifWorkTrayId}
+			</if>
+			<if test=" param != null and param.ifId != null and param.ifId != '' ">
+				AND if_id = #{param.ifId}
+			</if>
+			<if test=" param != null and param.refIfId != null and param.refIfId != '' ">
+				AND ref_if_id = #{param.refIfId}
+			</if>
+			<if test=" param != null and param.trayId != null and param.trayId != '' ">
+				AND tray_id = #{param.trayId}
+			</if>
+			<if test=" param != null and param.ifWorkTypeCd != null and param.ifWorkTypeCd != '' ">
+				AND if_work_type_cd = #{param.ifWorkTypeCd}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.exchange.workjobtray.WorkJobTrayVO">
+		/* WorkJobTrayDTOMapper-postgresql selectList */
+		<include refid="workJobTraySelect" />
+		<include refid="workJobTrayListWhere" />
+		ORDER BY if_work_tray_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* WorkJobTrayDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="workJobTraySelect" />
+			<include refid="workJobTrayListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.exchange.workjobtray.WorkJobTrayVO">
+		/* WorkJobTrayDTOMapper-postgresql selectDetail */
+		<include refid="workJobTraySelect" />
+		WHERE if_work_tray_id = #{ifWorkTrayId}
+		AND if_id = #{ifId}
+	</select>
+
+
+	<insert id="insert">
+		/* WorkJobTrayDTOMapper-postgresql insert */
+		INSERT INTO wmd_interface_work_tray
+		(
+			  if_work_tray_id
+			, if_id
+			, ref_if_id
+			, tray_id
+			, if_work_type_cd
+			, result_yn
+			, emergency_yn
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, ent_ymd
+			, remark
+			, seq
+		)
+		VALUES
+		(
+			  #{ifWorkTrayId}
+			, #{ifId}
+			, #{refIfId}
+			, #{trayId}
+			, #{ifWorkTypeCd}
+			, #{resultYn}
+			, #{emergencyYn}
+			, #{lineNo}
+			, #{rackId}
+			, #{rackCellXAxis}
+			, #{rackCellYAxis}
+			, #{entYmd}
+			, #{remark}
+			, #{seq}
+		)
+	</insert>
+
+
+
+</mapper>

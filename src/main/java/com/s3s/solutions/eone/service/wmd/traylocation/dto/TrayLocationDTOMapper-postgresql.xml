@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationMapper">
+
+	<sql id="trayLocationSelect">
+		SELECT
+			  tray_id
+			, input_date
+			, loc_type_cd
+			, buffer_id
+			, rack_cell_id
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+			, mod_dt
+			, (now()::DATE - input_date::DATE) AS storage_day
+		FROM wmd_tray_location
+	</sql>
+
+
+	<sql id="trayLocationListWhere">
+		<where>
+			<if test=" param != null and param.trayId != null and param.trayId != '' ">
+				AND tray_id LIKE CONCAT('%', #{param.trayId})
+			</if>
+			<if test=" param != null and param.inputDate != null and param.inputDate != '' ">
+				AND input_date = #{param.inputDate}
+			</if>
+			<if test=" param != null and param.locTypeCd != null and param.locTypeCd != '' ">
+				AND loc_type_cd = #{param.locTypeCd}
+			</if>
+			<if test=" param != null and param.bufferId != null and param.bufferId != '' ">
+				AND buffer_id = #{param.bufferId}
+			</if>
+			<if test=" param != null and param.rackCellId != null and param.rackCellId != '' ">
+				AND rack_cell_id = #{param.rackCellId}
+			</if>
+			<if test=" param != null and param.lineNo != null and param.lineNo != '' ">
+				AND line_no = #{param.lineNo}
+			</if>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.rackCellXAxis != null ">
+				AND rack_cell_x_axis = #{param.rackCellXAxis}
+			</if>
+			<if test=" param != null and param.rackCellYAxis != null ">
+				AND rack_cell_y_axis = #{param.rackCellYAxis}
+			</if>
+			<if test=" param != null and param.expirationDay != null ">
+				<![CDATA[ AND (now()::DATE - input_date::DATE) >= #{param.expirationDay} ]]>
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayLocationDTOMapper-postgresql selectList */
+		<include refid="trayLocationSelect" />
+		<include refid="trayLocationListWhere" />
+		ORDER BY tray_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* TrayLocationDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="trayLocationSelect" />
+			<include refid="trayLocationListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayLocationDTOMapper-postgresql selectDetail */
+		<include refid="trayLocationSelect" />
+		WHERE tray_id = #{trayId}
+	</select>
+
+
+	<insert id="insert">
+		/* TrayLocationDTOMapper-postgresql insert */
+		INSERT INTO wmd_tray_location
+		(
+			  tray_id
+			, input_date
+			, loc_type_cd
+			, buffer_id
+			, rack_cell_id
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+		)
+		VALUES
+		(
+			  #{trayId}
+			, #{inputDate}
+			, #{locTypeCd}
+			, #{bufferId}
+			, #{rackCellId}
+			, #{lineNo}
+			, #{rackId}
+			, #{rackCellXAxis}::integer
+			, #{rackCellYAxis}::integer
+			, #{regDt}::timestamp
+		)
+	</insert>
+
+
+	<update id="update">
+		/* TrayLocationDTOMapper-postgresql update */
+		UPDATE wmd_tray_location
+		<set>
+			<if test=" inputDate != null and inputDate != '' ">
+				input_date = #{inputDate} ,
+			</if>
+			<if test=" locTypeCd != null and locTypeCd != '' ">
+				loc_type_cd = #{locTypeCd} ,
+			</if>
+			<if test=" bufferId != '' ">
+				buffer_id = #{bufferId} ,
+			</if>
+			<if test=" rackCellId != '' ">
+				rack_cell_id = #{rackCellId} ,
+			</if>
+			<if test=" lineNo != '' ">
+				line_no = #{lineNo} ,
+			</if>
+			<if test=" rackId != '' ">
+				rack_id = #{rackId} ,
+			</if>
+			<if test=" rackCellXAxis != 0 ">
+				rack_cell_x_axis = #{rackCellXAxis}::integer ,
+			</if>
+			<if test=" rackCellYAxis != 0 ">
+				rack_cell_y_axis = #{rackCellYAxis}::integer ,
+			</if>
+			<if test=" modDt != '' ">
+				mod_dt = #{regDt}::timestamp ,
+			</if>
+		</set>
+		WHERE tray_id = #{trayId}
+	</update>
+
+
+	<delete id="delete">
+		/* TrayLocationDTOMapper-postgresql delete */
+		DELETE FROM wmd_tray_location
+		WHERE tray_id = #{trayId}
+	</delete>
+
+
+	<update id="merge">
+		/* TrayLocationDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{trayId}::text AS tray_id
+				, #{inputDate}::text AS input_date
+				, #{locTypeCd}::text AS loc_type_cd
+				, #{bufferId}::text AS buffer_id
+				, #{rackCellId}::text AS rack_cell_id
+				, #{lineNo}::text AS line_no
+				, #{rackId}::text AS rack_id
+				, #{rackCellXAxis}::Integer AS rack_cell_x_axis
+				, #{rackCellYAxis}::Integer AS rack_cell_y_axis
+				, #{regDt}::timestamp AS reg_dt
+				, #{modDt}::timestamp AS mod_dt
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_tray_location U
+			<set>
+				<if test=" inputDate != null and inputDate != '' ">
+					input_date = #{inputDate} ,
+				</if>
+				<if test=" locTypeCd != null and locTypeCd != '' ">
+					loc_type_cd = #{locTypeCd} ,
+				</if>
+				<if test=" bufferId != '' ">
+					buffer_id = #{bufferId} ,
+				</if>
+				<if test=" rackCellId != '' ">
+					rack_cell_id = #{rackCellId} ,
+				</if>
+				<if test=" lineNo != '' ">
+					line_no = #{lineNo} ,
+				</if>
+				<if test=" rackId != '' ">
+					rack_id = #{rackId} ,
+				</if>
+				<if test=" rackCellXAxis != 0 ">
+					rack_cell_x_axis = #{rackCellXAxis}::integer ,
+				</if>
+				<if test=" rackCellYAxis != 0 ">
+					rack_cell_y_axis = #{rackCellYAxis}::integer ,
+				</if>
+				<if test=" modDt != '' ">
+					mod_dt = #{regDt}::timestamp ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.tray_id = T.tray_id
+		)
+		INSERT INTO wmd_tray_location
+		(
+			  tray_id
+			, input_date
+			, loc_type_cd
+			, buffer_id
+			, rack_cell_id
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+		)
+		SELECT
+			  T.tray_id
+			, T.input_date
+			, T.loc_type_cd
+			, T.buffer_id
+			, T.rack_cell_id
+			, T.line_no
+			, T.rack_id
+			, T.rack_cell_x_axis
+			, T.rack_cell_y_axis
+			, T.reg_dt
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			tray_id
+		FROM wmd_tray_location AS TMP
+		WHERE TMP.tray_id = T.tray_id
+		)
+	</update>
+
+
+</mapper>

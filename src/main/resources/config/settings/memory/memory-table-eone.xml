@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables refDataSourceBean="dataSource.eone">
+
+	<table name="wmd_machine">
+		<keys>
+			<key>mcId</key>
+		</keys>
+		<value>mcName</value>
+	</table>
+
+	<table name="wmd_system_operation_mode">
+		<keys>
+			<key>systemOperationModeId</key>
+		</keys>
+		<value>systemOperationModeName</value>
+	</table>
+
+	<table name="wmd_system_operation_mode_step">
+		<keys>
+			<key>systemOperationModeId</key>
+			<key>systemOperationModeStepId</key>
+		</keys>
+		<value>systemOperationModeStepName</value>
+		<group key="systemOperationModeId"/>
+	</table>
+
+	<table name="wmd_rack">
+		<keys>
+			<key>rackId</key>
+		</keys>
+		<value>rackName</value>
+	</table>
+
+
+</tables>

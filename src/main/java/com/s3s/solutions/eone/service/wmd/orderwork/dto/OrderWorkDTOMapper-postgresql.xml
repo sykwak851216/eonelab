@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.orderwork.OrderWorkMapper">
+
+	<sql id="orderWorkSelect">
+		SELECT
+			  work_id
+			, order_id
+			, buffer_id
+			, in_out_type_cd
+			, plan_no
+			, inquiry_qty
+			, tray_id
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, work_status_cd
+			, reg_dt
+			, mod_dt
+		FROM wmd_order_work
+	</sql>
+
+
+	<sql id="orderWorkListWhere">
+		<where>
+			<if test=" param != null and param.workId != null and param.workId != '' ">
+				AND work_id = #{param.workId}
+			</if>
+			<if test=" param != null and param.orderId != null and param.orderId != '' ">
+				AND order_id = #{param.orderId}
+			</if>
+			<if test=" param != null and param.bufferId != null and param.bufferId != '' ">
+				AND buffer_id = #{param.bufferId}
+			</if>
+			<if test=" param != null and param.inOutTypeCd != null and param.inOutTypeCd != '' ">
+				AND in_out_type_cd = #{param.inOutTypeCd}
+			</if>
+			<if test=" param != null and param.planNo != null and param.planNo != '' ">
+				AND plan_no = #{param.planNo}
+			</if>
+			<if test=" param != null and param.trayId != null and param.trayId != '' ">
+				AND tray_id = #{param.trayId}
+			</if>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.inquiryQty != null ">
+				AND inquiry_qty = #{param.inquiryQty}
+			</if>
+			<if test=" param != null and param.rackCellXAxis != null ">
+				AND rack_cell_x_axis = #{param.rackCellXAxis}
+			</if>
+			<if test=" param != null and param.rackCellYAxis != null ">
+				AND rack_cell_y_axis = #{param.rackCellYAxis}
+			</if>
+			<if test=" param != null and param.workStatusCd != null and param.workStatusCd != '' ">
+				AND work_status_cd = #{param.workStatusCd}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.orderwork.OrderWorkVO">
+		/* OrderWorkDTOMapper-postgresql selectList */
+		<include refid="orderWorkSelect" />
+		<include refid="orderWorkListWhere" />
+		ORDER BY work_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* OrderWorkDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="orderWorkSelect" />
+			<include refid="orderWorkListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.orderwork.OrderWorkVO">
+		/* OrderWorkDTOMapper-postgresql selectDetail */
+		<include refid="orderWorkSelect" />
+		WHERE work_id = #{workId}
+	</select>
+
+
+	<insert id="insert">
+		/* OrderWorkDTOMapper-postgresql insert */
+		INSERT INTO wmd_order_work
+		(
+			  work_id
+			, order_id
+			, buffer_id
+			, in_out_type_cd
+			, plan_no
+			, tray_id
+			, rack_id
+			, inquiry_qty
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, work_status_cd
+			, reg_dt
+		)
+		VALUES
+		(
+			  #{workId}
+			, #{orderId}
+			, #{bufferId}
+			, #{inOutTypeCd}
+			, #{planNo}
+			, #{trayId}
+			, #{rackId}
+			, #{inquiryQty}
+			, #{rackCellXAxis}
+			, #{rackCellYAxis}
+			, #{workStatusCd}
+			, #{regDt}::timestamp
+		)
+	</insert>
+
+
+	<update id="update">
+		/* OrderWorkDTOMapper-postgresql update */
+		UPDATE wmd_order_work
+		<set>
+			<if test=" orderId != null and orderId != '' ">
+				order_id = #{orderId} ,
+			</if>
+			<if test=" bufferId != null and bufferId != '' ">
+				buffer_id = #{bufferId} ,
+			</if>
+			<if test=" inOutTypeCd != null and inOutTypeCd != '' ">
+				in_out_type_cd = #{inOutTypeCd} ,
+			</if>
+			<if test=" planNo != null and planNo != '' ">
+				plan_no = #{planNo} ,
+			</if>
+			<if test=" trayId != null and trayId != '' ">
+				tray_id = #{trayId} ,
+			</if>
+			<if test=" rackId != null and rackId != '' ">
+				rack_id = #{rackId} ,
+			</if>
+			<if test=" inquiryQty != null ">
+				inquiry_qty = #{inquiryQty} ,
+			</if>
+			<if test=" rackCellXAxis != null ">
+				rack_cell_x_axis = #{rackCellXAxis} ,
+			</if>
+			<if test=" rackCellYAxis != null ">
+				rack_cell_y_axis = #{rackCellYAxis} ,
+			</if>
+			<if test=" workStatusCd != null and workStatusCd != '' ">
+				work_status_cd = #{workStatusCd} ,
+			</if>
+			<if test=" modDt != null and modDt != '' ">
+				mod_dt = #{modDt}::timestamp ,
+			</if>
+		</set>
+		WHERE work_id = #{workId}
+	</update>
+
+
+	<delete id="delete">
+		/* OrderWorkDTOMapper-postgresql delete */
+		DELETE FROM wmd_order_work
+		WHERE work_id = #{workId}
+	</delete>
+
+
+	<update id="merge">
+		/* OrderWorkDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{workId}::text AS work_id
+				, #{orderId}::text AS order_id
+				, #{bufferId}::text AS buffer_id
+				, #{inOutTypeCd}::text AS in_out_type_cd
+				, #{planNo}::text AS plan_no
+				, #{trayId}::text AS tray_id
+				, #{rackId}::text AS rack_id
+				, #{inquiryQty}::Integer AS inquiry_qty
+				, #{rackCellXAxis}::Integer AS rack_cell_x_axis
+				, #{rackCellYAxis}::Integer AS rack_cell_y_axis
+				, #{workStatusCd}::text AS work_status_cd
+				, #{regDt}::timestamp AS reg_dt
+				, #{modDt}::timestamp AS mod_dt
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_order_work U
+			<set>
+				<if test=" orderId != null and orderId != '' ">
+					order_id = #{orderId} ,
+				</if>
+				<if test=" bufferId != null and bufferId != '' ">
+					buffer_id = #{bufferId} ,
+				</if>
+				<if test=" inOutTypeCd != null and inOutTypeCd != '' ">
+					in_out_type_cd = #{inOutTypeCd} ,
+				</if>
+				<if test=" planNo != null and planNo != '' ">
+					plan_no = #{planNo} ,
+				</if>
+				<if test=" trayId != null and trayId != '' ">
+					tray_id = #{trayId} ,
+				</if>
+				<if test=" rackId != null and rackId != '' ">
+					rack_id = #{rackId} ,
+				</if>
+				<if test=" inquiryQty != null ">
+					inquiry_qty = #{inquiryQty} ,
+				</if>
+				<if test=" rackCellXAxis != null ">
+					rack_cell_x_axis = #{rackCellXAxis} ,
+				</if>
+				<if test=" rackCellYAxis != null ">
+					rack_cell_y_axis = #{rackCellYAxis} ,
+				</if>
+				<if test=" workStatusCd != null and workStatusCd != '' ">
+					work_status_cd = #{workStatusCd} ,
+				</if>
+				<if test=" modDt != null and modDt != '' ">
+					mod_dt = #{modDt}::timestamp ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.work_id = T.work_id
+		)
+		INSERT INTO wmd_order_work
+		(
+			  work_id
+			, order_id
+			, buffer_id
+			, in_out_type_cd
+			, plan_no
+			, tray_id
+			, rack_id
+			, inquiry_qty
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, work_status_cd
+			, reg_dt
+			, mod_dt
+		)
+		SELECT
+			  T.work_id
+			, T.order_id
+			, T.buffer_id
+			, T.in_out_type_cd
+			, T.plan_no
+			, T.tray_id
+			, T.rack_id
+			, T.inquiry_qty
+			, T.rack_cell_x_axis
+			, T.rack_cell_y_axis
+			, T.work_status_cd
+			, T.reg_dt
+			, T.mod_dt
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			work_id
+		FROM wmd_order_work AS TMP
+		WHERE TMP.work_id = T.work_id
+		)
+	</update>
+
+
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.rackcell.RackCellMapper">
+
+	<select id="selectRackCellListByGantry" resultType="com.s3s.solutions.eone.service.wmd.rackcell.RackCellVO">
+		/* RackCellMapper-postgresql selectRackCellListByGantry */
+		SELECT
+			  rc.rack_cell_id
+			, rc.rack_cell_name
+			, rc.rack_id
+			, rc.rack_cell_x_axis
+			, rc.rack_cell_y_axis
+			, tl.tray_id
+			, tl.input_date
+			, (now()::DATE - tl.input_date::DATE) AS storage_day
+			, tl.line_no
+		FROM wmd_rack_cell rc
+
+		LEFT OUTER JOIN wmd_rack r
+			ON r.rack_id = rc.rack_id
+
+		LEFT OUTER JOIN wmd_tray_location tl
+			ON tl.rack_id = rc.rack_id AND tl.rack_cell_x_axis = rc.rack_cell_x_axis AND tl.rack_cell_y_axis = rc.rack_cell_y_axis
+
+		<where>
+			<if test=" param != null and param.mcId != null and param.mcId != '' ">
+				AND r.mc_id = #{param.mcId}
+			</if>
+			<if test=" param != null and param.rackCellId != null and param.rackCellId != '' ">
+				AND rc.rack_cell_id = #{param.rackCellId}
+			</if>
+			<if test=" param != null and param.rackCellName != null and param.rackCellName != '' ">
+				AND rc.rack_cell_name = #{param.rackCellName}
+			</if>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND rc.rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.rackCellXAxis != null ">
+				AND rc.rack_cell_x_axis = #{param.rackCellXAxis}
+			</if>
+			<if test=" param != null and param.rackCellYAxis != null ">
+				AND rc.rack_cell_y_axis = #{param.rackCellYAxis}
+			</if>
+			<if test=" param != null and param.lineNo != null and param.lineNo != '' ">
+				AND r.line_no = #{param.lineNo}
+			</if>
+			<if test=" param != null and param.delYn != null and param.delYn != '' ">
+				AND rc.del_yn = #{param.delYn}
+			</if>
+		</where>
+		ORDER BY r.rack_id, rc.rack_cell_x_axis DESC
+	</select>
+
+</mapper>

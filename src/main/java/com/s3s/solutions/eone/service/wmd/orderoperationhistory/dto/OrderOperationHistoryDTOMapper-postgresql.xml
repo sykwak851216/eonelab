@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.orderoperationhistory.OrderOperationHistoryMapper">
+
+	<sql id="orderOperationHistorySelect">
+		SELECT
+			  order_id
+			, order_group_id
+			, system_operation_mode_id
+			, system_operation_mode_step_id
+			, system_operation_mode_step_sort
+			, operation_start_dt
+			, operation_end_dt
+		FROM wmd_order_operation_history
+	</sql>
+
+
+	<sql id="orderOperationHistoryListWhere">
+		<where>
+			<if test=" param != null and param.orderId != null and param.orderId != '' ">
+				AND order_id = #{param.orderId}
+			</if>
+			<if test=" param != null and param.orderGroupId != null and param.orderGroupId != '' ">
+				AND order_group_id = #{param.orderGroupId}
+			</if>
+			<if test=" param != null and param.systemOperationModeId != null and param.systemOperationModeId != '' ">
+				AND system_operation_mode_id = #{param.systemOperationModeId}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepId != null and param.systemOperationModeStepId != '' ">
+				AND system_operation_mode_step_id = #{param.systemOperationModeStepId}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepSort != null ">
+				AND system_operation_mode_step_sort = #{param.systemOperationModeStepSort}
+			</if>
+			<if test=" param != null and param.operationStartDt != null and param.operationStartDt != '' ">
+				AND operation_start_dt = #{param.operationStartDt}
+			</if>
+			<if test=" param != null and param.operationEndDt != null and param.operationEndDt != '' ">
+				AND operation_end_dt = #{param.operationEndDt}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.orderoperationhistory.OrderOperationHistoryVO">
+		/* OrderOperationHistoryDTOMapper-postgresql selectList */
+		<include refid="orderOperationHistorySelect" />
+		<include refid="orderOperationHistoryListWhere" />
+		ORDER BY order_id, system_operation_mode_step_sort
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* OrderOperationHistoryDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="orderOperationHistorySelect" />
+			<include refid="orderOperationHistoryListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.orderoperationhistory.OrderOperationHistoryVO">
+		/* OrderOperationHistoryDTOMapper-postgresql selectDetail */
+		<include refid="orderOperationHistorySelect" />
+		WHERE order_id = #{orderId}
+		AND system_operation_mode_id = #{systemOperationModeId}
+		AND system_operation_mode_step_id = #{systemOperationModeStepId}
+	</select>
+
+
+	<insert id="insert">
+		/* OrderOperationHistoryDTOMapper-postgresql insert */
+		INSERT INTO wmd_order_operation_history
+		(
+			  order_id
+			, order_group_id
+			, system_operation_mode_id
+			, system_operation_mode_step_id
+			, system_operation_mode_step_sort
+			, operation_start_dt
+			, operation_end_dt
+		)
+		VALUES
+		(
+			  #{orderId}
+			, #{orderGroupId}
+			, #{systemOperationModeId}
+			, #{systemOperationModeStepId}
+			, #{systemOperationModeStepSort}
+			, #{operationStartDt}::timestamp
+			, #{operationEndDt}::timestamp
+		)
+	</insert>
+
+
+	<update id="update">
+		/* OrderOperationHistoryDTOMapper-postgresql update */
+		UPDATE wmd_order_operation_history
+		<set>
+			<if test=" orderGroupId != null and orderGroupId != '' ">
+				order_group_id = #{orderGroupId} ,
+			</if>
+			<if test=" systemOperationModeStepSort != null ">
+				system_operation_mode_step_sort = #{systemOperationModeStepSort} ,
+			</if>
+			<if test=" operationStartDt != null and operationStartDt != '' ">
+				operation_start_dt = #{operationStartDt}::timestamp ,
+			</if>
+			<if test=" operationEndDt != null and operationEndDt != '' ">
+				operation_end_dt = #{operationEndDt}::timestamp ,
+			</if>
+		</set>
+		WHERE order_id = #{orderId}
+		AND system_operation_mode_id = #{systemOperationModeId}
+		AND system_operation_mode_step_id = #{systemOperationModeStepId}
+	</update>
+
+
+	<delete id="delete">
+		/* OrderOperationHistoryDTOMapper-postgresql delete */
+		DELETE FROM wmd_order_operation_history
+		WHERE order_id = #{orderId}
+		AND system_operation_mode_id = #{systemOperationModeId}
+		AND system_operation_mode_step_id = #{systemOperationModeStepId}
+	</delete>
+
+
+	<update id="merge">
+		/* OrderOperationHistoryDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{orderId}::text AS order_id
+				, #{orderGroupId}::text AS order_group_id
+				, #{systemOperationModeId}::text AS system_operation_mode_id
+				, #{systemOperationModeStepId}::text AS system_operation_mode_step_id
+				, #{systemOperationModeStepSort}::Integer AS system_operation_mode_step_sort
+				, #{operationStartDt}::timestamp AS operation_start_dt
+				, #{operationEndDt}::timestamp AS operation_end_dt
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_order_operation_history U
+			<set>
+				<if test=" orderGroupId != null and orderGroupId != '' ">
+					order_group_id = #{orderGroupId} ,
+				</if>
+				<if test=" systemOperationModeStepSort != null ">
+					system_operation_mode_step_sort = #{systemOperationModeStepSort} ,
+				</if>
+				<if test=" operationStartDt != null and operationStartDt != '' ">
+					operation_start_dt = #{operationStartDt}::timestamp ,
+				</if>
+				<if test=" operationEndDt != null and operationEndDt != '' ">
+					operation_end_dt = #{operationEndDt}::timestamp ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.order_id = T.order_id
+				AND U.system_operation_mode_id = T.system_operation_mode_id
+				AND U.system_operation_mode_step_id = T.system_operation_mode_step_id
+		)
+		INSERT INTO wmd_order_operation_history
+		(
+			  order_id
+			, order_group_id
+			, system_operation_mode_id
+			, system_operation_mode_step_id
+			, system_operation_mode_step_sort
+			, operation_start_dt
+			, operation_end_dt
+		)
+		SELECT
+			  T.order_id
+			, T.order_group_id
+			, T.system_operation_mode_id
+			, T.system_operation_mode_step_id
+			, T.system_operation_mode_step_sort
+			, T.operation_start_dt
+			, T.operation_end_dt
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			order_id
+			,system_operation_mode_id
+			,system_operation_mode_step_id
+		FROM wmd_order_operation_history AS TMP
+		WHERE TMP.order_id = T.order_id
+		AND TMP.system_operation_mode_id = T.system_operation_mode_id
+		AND TMP.system_operation_mode_step_id = T.system_operation_mode_step_id
+		)
+	</update>
+
+
+</mapper>

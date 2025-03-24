@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.trayduplicatelocation.TrayDuplicateLocationMapper">
+
+	<sql id="trayDuplicateLocationSelect">
+		SELECT
+			  tray_id
+			, input_date
+			, loc_type_cd
+			, rack_cell_id
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+		FROM wmd_tray_duplicate_location
+	</sql>
+
+
+	<sql id="trayDuplicateLocationListWhere">
+		<where>
+			<if test=" param != null and param.trayId != null and param.trayId != '' ">
+				AND tray_id = #{param.trayId}
+			</if>
+			<if test=" param != null and param.inputDate != null and param.inputDate != '' ">
+				AND input_date = #{param.inputDate}
+			</if>
+			<if test=" param != null and param.locTypeCd != null and param.locTypeCd != '' ">
+				AND loc_type_cd = #{param.locTypeCd}
+			</if>
+			<if test=" param != null and param.rackCellId != null and param.rackCellId != '' ">
+				AND rack_cell_id = #{param.rackCellId}
+			</if>
+			<if test=" param != null and param.lineNo != null and param.lineNo != '' ">
+				AND line_no = #{param.lineNo}
+			</if>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.rackCellXAxis != null ">
+				AND rack_cell_x_axis = #{param.rackCellXAxis}
+			</if>
+			<if test=" param != null and param.rackCellYAxis != null ">
+				AND rack_cell_y_axis = #{param.rackCellYAxis}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayDuplicateLocationMapper-postgresql selectList */
+		<include refid="trayDuplicateLocationSelect" />
+		<include refid="trayDuplicateLocationListWhere" />
+		ORDER BY tray_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* TrayDuplicateLocationMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="trayDuplicateLocationSelect" />
+			<include refid="trayDuplicateLocationListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayDuplicateLocationMapper-postgresql selectDetail */
+		<include refid="trayDuplicateLocationSelect" />
+		WHERE tray_id = #{trayId}
+	</select>
+
+
+	<insert id="insert">
+		/* TrayDuplicateLocationMapper-postgresql insert */
+		INSERT INTO wmd_tray_duplicate_location
+		(
+			  tray_id
+			, input_date
+			, loc_type_cd
+			, rack_cell_id
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+		)
+		VALUES
+		(
+			  #{trayId}
+			, #{inputDate}
+			, #{locTypeCd}
+			, #{rackCellId}
+			, #{lineNo}
+			, #{rackId}
+			, #{rackCellXAxis}::integer
+			, #{rackCellYAxis}::integer
+			, #{regDt}::timestamp
+		)
+	</insert>
+
+
+	<update id="update">
+		/* TrayDuplicateLocationMapper-postgresql update */
+		UPDATE wmd_tray_duplicate_location
+		<set>
+			<if test=" inputDate != null and inputDate != '' ">
+				input_date = #{inputDate} ,
+			</if>
+			<if test=" locTypeCd != null and locTypeCd != '' ">
+				loc_type_cd = #{locTypeCd} ,
+			</if>
+			<if test=" rackCellId != '' ">
+				rack_cell_id = #{rackCellId} ,
+			</if>
+			<if test=" lineNo != '' ">
+				line_no = #{lineNo} ,
+			</if>
+			<if test=" rackId != '' ">
+				rack_id = #{rackId} ,
+			</if>
+			<if test=" rackCellXAxis != 0 ">
+				rack_cell_x_axis = #{rackCellXAxis}::integer ,
+			</if>
+			<if test=" rackCellYAxis != 0 ">
+				rack_cell_y_axis = #{rackCellYAxis}::integer ,
+			</if>
+		</set>
+		WHERE tray_id = #{trayId}
+	</update>
+
+
+	<delete id="delete">
+		/* TrayDuplicateLocationMapper-postgresql delete */
+		DELETE FROM wmd_tray_duplicate_location
+		WHERE tray_id = #{trayId}
+	</delete>
+
+
+	<update id="merge">
+		/* TrayDuplicateLocationMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{trayId}::text AS tray_id
+				, #{inputDate}::text AS input_date
+				, #{locTypeCd}::text AS loc_type_cd
+				, #{rackCellId}::text AS rack_cell_id
+				, #{lineNo}::text AS line_no
+				, #{rackId}::text AS rack_id
+				, #{rackCellXAxis}::Integer AS rack_cell_x_axis
+				, #{rackCellYAxis}::Integer AS rack_cell_y_axis
+				, #{regDt}::timestamp AS reg_dt
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_tray_duplicate_location U
+			<set>
+				<if test=" inputDate != null and inputDate != '' ">
+					input_date = #{inputDate} ,
+				</if>
+				<if test=" locTypeCd != null and locTypeCd != '' ">
+					loc_type_cd = #{locTypeCd} ,
+				</if>
+				<if test=" rackCellId != '' ">
+					rack_cell_id = #{rackCellId} ,
+				</if>
+				<if test=" lineNo != '' ">
+					line_no = #{lineNo} ,
+				</if>
+				<if test=" rackId != '' ">
+					rack_id = #{rackId} ,
+				</if>
+				<if test=" rackCellXAxis != 0 ">
+					rack_cell_x_axis = #{rackCellXAxis}::integer ,
+				</if>
+				<if test=" rackCellYAxis != 0 ">
+					rack_cell_y_axis = #{rackCellYAxis}::integer ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.tray_id = T.tray_id
+		)
+		INSERT INTO wmd_tray_duplicate_location
+		(
+			  tray_id
+			, input_date
+			, loc_type_cd
+			, rack_cell_id
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+		)
+		SELECT
+			  T.tray_id
+			, T.input_date
+			, T.loc_type_cd
+			, T.rack_cell_id
+			, T.line_no
+			, T.rack_id
+			, T.rack_cell_x_axis
+			, T.rack_cell_y_axis
+			, T.reg_dt
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			tray_id
+		FROM wmd_tray_duplicate_location AS TMP
+		WHERE TMP.tray_id = T.tray_id
+		)
+	</update>
+
+
+</mapper>

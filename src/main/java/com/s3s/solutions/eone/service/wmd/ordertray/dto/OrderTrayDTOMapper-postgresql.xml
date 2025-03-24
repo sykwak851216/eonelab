@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.ordertray.OrderTrayMapper">
+
+	<sql id="orderTraySelect">
+		SELECT
+			  order_id
+			, buffer_id
+			, in_out_type_cd
+			, tray_id
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+		FROM wmd_order_tray
+	</sql>
+
+
+	<sql id="orderTrayListWhere">
+		<where>
+			<if test=" param != null and param.orderId != null and param.orderId != '' ">
+				AND order_id = #{param.orderId}
+			</if>
+			<if test=" param != null and param.bufferId != null and param.bufferId != '' ">
+				AND buffer_id = #{param.bufferId}
+			</if>
+			<if test=" param != null and param.inOutTypeCd != null and param.inOutTypeCd != '' ">
+				AND in_out_type_cd = #{param.inOutTypeCd}
+			</if>
+			<if test=" param != null and param.trayId != null and param.trayId != '' ">
+				AND tray_id = #{param.trayId}
+			</if>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.rackCellXAxis != null ">
+				AND rack_cell_x_axis = #{param.rackCellXAxis}
+			</if>
+			<if test=" param != null and param.rackCellYAxis != null ">
+				AND rack_cell_y_axis = #{param.rackCellYAxis}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.ordertray.OrderTrayVO">
+		/* OrderTrayDTOMapper-postgresql selectList */
+		<include refid="orderTraySelect" />
+		<include refid="orderTrayListWhere" />
+		ORDER BY order_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* OrderTrayDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="orderTraySelect" />
+			<include refid="orderTrayListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.ordertray.OrderTrayVO">
+		/* OrderTrayDTOMapper-postgresql selectDetail */
+		<include refid="orderTraySelect" />
+		WHERE order_id = #{orderId}
+		AND buffer_id = #{bufferId}
+	</select>
+
+
+	<insert id="insert">
+		/* OrderTrayDTOMapper-postgresql insert */
+		INSERT INTO wmd_order_tray
+		(
+			  order_id
+			, buffer_id
+			, in_out_type_cd
+			, tray_id
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+		)
+		VALUES
+		(
+			  #{orderId}
+			, #{bufferId}
+			, #{inOutTypeCd}
+			, #{trayId}
+			, #{rackId}
+			, #{rackCellXAxis}
+			, #{rackCellYAxis}
+			, #{regDt}::timestamp
+		)
+	</insert>
+
+
+	<update id="update">
+		/* OrderTrayDTOMapper-postgresql update */
+		UPDATE wmd_order_tray
+		<set>
+			<if test=" inOutTypeCd != null and inOutTypeCd != '' ">
+				in_out_type_cd = #{inOutTypeCd} ,
+			</if>
+			<if test=" trayId != null and trayId != '' ">
+				tray_id = #{trayId} ,
+			</if>
+			<if test=" rackId != null and rackId != '' ">
+				rack_id = #{rackId} ,
+			</if>
+			<if test=" rackCellXAxis != null ">
+				rack_cell_x_axis = #{rackCellXAxis} ,
+			</if>
+			<if test=" rackCellYAxis != null ">
+				rack_cell_y_axis = #{rackCellYAxis} ,
+			</if>
+		</set>
+		WHERE order_id = #{orderId}
+		AND buffer_id = #{bufferId}
+	</update>
+
+
+	<delete id="delete">
+		/* OrderTrayDTOMapper-postgresql delete */
+		DELETE FROM wmd_order_tray
+		WHERE order_id = #{orderId}
+		AND buffer_id = #{bufferId}
+	</delete>
+
+
+	<update id="merge">
+		/* OrderTrayDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{orderId}::text AS order_id
+				, #{bufferId}::text AS buffer_id
+				, #{inOutTypeCd}::text AS in_out_type_cd
+				, #{trayId}::text AS tray_id
+				, #{rackId}::text AS rack_id
+				, #{rackCellXAxis}::Integer AS rack_cell_x_axis
+				, #{rackCellYAxis}::Integer AS rack_cell_y_axis
+				, #{regDt}::timestamp AS reg_dt
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_order_tray U
+			<set>
+				<if test=" inOutTypeCd != null and inOutTypeCd != '' ">
+					in_out_type_cd = #{inOutTypeCd} ,
+				</if>
+				<if test=" trayId != null and trayId != '' ">
+					tray_id = #{trayId} ,
+				</if>
+				<if test=" rackId != null and rackId != '' ">
+					rack_id = #{rackId} ,
+				</if>
+				<if test=" rackCellXAxis != null ">
+					rack_cell_x_axis = #{rackCellXAxis} ,
+				</if>
+				<if test=" rackCellYAxis != null ">
+					rack_cell_y_axis = #{rackCellYAxis} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.order_id = T.order_id
+				AND U.buffer_id = T.buffer_id
+		)
+		INSERT INTO wmd_order_tray
+		(
+			  order_id
+			, buffer_id
+			, in_out_type_cd
+			, tray_id
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+		)
+		SELECT
+			  T.order_id
+			, T.buffer_id
+			, T.in_out_type_cd
+			, T.tray_id
+			, T.rack_id
+			, T.rack_cell_x_axis
+			, T.rack_cell_y_axis
+			, T.reg_dt
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			order_id
+			,buffer_id
+		FROM wmd_order_tray AS TMP
+		WHERE TMP.order_id = T.order_id
+		AND TMP.buffer_id = T.buffer_id
+		)
+	</update>
+
+
+</mapper>

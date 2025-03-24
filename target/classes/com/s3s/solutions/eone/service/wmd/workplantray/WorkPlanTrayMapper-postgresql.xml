@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.workplantray.WorkPlanTrayMapper">
+
+
+	<sql id="select">
+		SELECT
+			  plan_no
+			, plan_group_no
+			, tray_id
+			, order_kind_cd
+			, order_type_cd
+			, tray_order_sort
+			, emergency_yn
+			, input_date
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, excute_yn
+			, tray_status_cd
+			, cancel_yn
+			, reg_dt
+			, mod_dt
+			, (now()::DATE - input_date::DATE) AS storage_day
+		FROM wmd_work_plan_tray
+	</sql>
+
+
+	<sql id="where">
+		<where>
+			<if test=" param != null and param.planNo != null and param.planNo != '' ">
+				AND plan_no = #{param.planNo}
+			</if>
+			<if test=" param != null and param.planGroupNo != null and param.planGroupNo != '' ">
+				AND plan_group_no = #{param.planGroupNo}
+			</if>
+			<if test=" param != null and param.trayId != null and param.trayId != '' ">
+				AND tray_id = #{param.trayId}
+			</if>
+			<if test=" param != null and param.orderKindCd != null and param.orderKindCd != '' ">
+				AND order_kind_cd = #{param.orderKindCd}
+			</if>
+			<if test=" param != null and param.orderTypeCd != null and param.orderTypeCd != '' ">
+				AND order_type_cd = #{param.orderTypeCd}
+			</if>
+			<if test=" param != null and param.trayOrderSort != null and param.trayOrderSort != '' ">
+				AND tray_order_sort = #{param.trayOrderSort}
+			</if>
+			<if test=" param != null and param.emergencyYn != null and param.emergencyYn != '' ">
+				AND emergency_yn = #{param.emergencyYn}
+			</if>
+			<if test=" param != null and param.inputDate != null and param.inputDate != '' ">
+				AND input_date = #{param.inputDate}
+			</if>
+			<if test=" param != null and param.lineNo != null and param.lineNo != '' ">
+				AND line_no = #{param.lineNo}
+			</if>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.rackCellXAxis != null ">
+				AND rack_cell_x_axis = #{param.rackCellXAxis}
+			</if>
+			<if test=" param != null and param.rackCellYAxis != null ">
+				AND rack_cell_y_axis = #{param.rackCellYAxis}
+			</if>
+			<if test=" param != null and param.excuteYn != null and param.excuteYn != '' ">
+				AND excute_yn = #{param.excuteYn}
+			</if>
+			<if test=" param != null and param.trayStatusCd != null and param.trayStatusCd != '' ">
+				AND tray_status_cd = #{param.trayStatusCd}
+			</if>
+			<if test=" param != null and param.cancelYn != null and param.cancelYn != '' ">
+				AND cancel_yn = #{param.cancelYn}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectWorkPlanTrayList" resultType="com.s3s.solutions.eone.service.wmd.workplantray.WorkPlanTrayVO">
+		/* WorkPlanTrayMapper-postgresql selectWorkPlanTrayList */
+		<include refid="select" />
+		<include refid="where" />
+		ORDER BY tray_order_sort
+	</select>
+
+
+	<select id="maxTrayOrderSort" resultType="int">
+		/* WorkPlanTrayMapper-postgresql maxTrayOrderSort */
+		SELECT
+			COALESCE(MAX(tray_order_sort), 0) AS max_tray_order_sort
+		FROM wmd_work_plan_tray
+		<include refid="where" />
+	</select>
+
+
+	<update id="doEmergency">
+		/* WorkPlanTrayMapper-postgresql doEmergency */
+		<if test=" param != null and param.planNoList != null and param.planNoList.size != 0 ">
+			UPDATE wmd_work_plan_tray SET emergency_yn = 'Y'
+			WHERE plan_no IN <foreach collection="param.planNoList" item="item" index="index" open="(" close=")" separator=",">#{item}</foreach>
+		</if>
+	</update>
+
+
+	<update id="deleteWorkPlantray">
+		/* WorkPlanTrayMapper-postgresql deleteWorkPlantray */
+		<if test=" param != null and param.planNoList != null and param.planNoList.size != 0 ">
+		UPDATE wmd_work_plan_tray SET cancel_yn = 'Y'
+		WHERE plan_no IN
+		<foreach collection="param.planNoList" item="item" index="index" open="(" close=")" separator=",">#{item}</foreach>
+		</if>
+	</update>
+
+	<select id="updateCompleteWorkPlanTrayListByPlanNo" resultType="com.s3s.solutions.eone.service.wmd.workplantray.WorkPlanTrayVO">
+		/* WorkPlanTrayMapper-postgresql updateWorkPlanTrayListByPlanNo */
+		UPDATE wmd_work_plan_tray
+			SET tray_status_cd = 'COMPLETE'
+			, excute_yn = 'Y'
+		WHERE plan_no IN
+		<foreach collection="param.planNoList" item="item" index="index" open="(" close=")" separator=",">#{item}</foreach>
+	</select>
+
+
+	<select id="selectTrayInfoReadyIng" resultType="com.s3s.solutions.eone.service.wmd.workplantray.WorkPlanTrayVO">
+		/* WorkPlanTrayMapper-postgresql countTrayInfoReadyIng */
+		SELECT * FROM wmd_work_plan_tray
+		<![CDATA[ WHERE tray_status_cd <> 'COMPLETE' ]]>
+		AND tray_id = #{trayId}
+		AND cancel_yn = 'N'
+	</select>
+	
+	<select id="selectContinuousFistOrderByLineNo" resultType="com.s3s.solutions.eone.service.wmd.workplantray.WorkPlanTrayVO">
+		/* WorkPlanTrayMapper-postgresql selectContinuousFistOrderByLineNo */
+		SELECT
+		 * 
+		FROM wmd_work_plan_tray
+		WHERE line_no = #{lineNo}
+			AND tray_status_cd = 'READY'
+			AND cancel_yn = 'N'
+			AND excute_yn = 'N'
+		ORDER BY emergency_yn DESC, reg_dt
+	</select>
+	
+	<select id="selectTotalCountWorkPlanTrayLimitListByLineNo" resultType="int">
+		/* WorkPlanTrayMapper-postgresql selectTotalCountWorkPlanTrayLimitListByLineNo */
+		SELECT
+		  COUNT(*) AS totalRows
+		FROM wmd_work_plan_tray
+		WHERE line_no = #{param.lineNo}
+			AND tray_status_cd = 'READY'
+			AND cancel_yn = 'N'
+			AND excute_yn = 'N'
+		<if test=" param != null and param.orderTypeCd != null and param.orderTypeCd != '' ">
+			AND order_type_cd = #{param.orderTypeCd}
+		</if>
+		<if test=' param != null and param.emergencyYn != null and param.emergencyYn == "Y" '>
+			AND emergency_yn = #{param.emergencyYn}
+		</if>
+		<if test=' param != null and param.emergencyYn != null and param.emergencyYn == "N" '>
+			AND emergency_yn = #{param.emergencyYn}
+			AND plan_group_no = #{param.planGroupNo}
+		</if>
+	</select>
+	
+	<select id="selectWorkPlanTrayLimitListByLineNo" resultType="com.s3s.solutions.eone.service.wmd.workplantray.WorkPlanTrayVO">
+		/* WorkPlanTrayMapper-postgresql selectWorkPlanTrayLimitListByLineNo */
+		SELECT
+			a.plan_no
+			, a.plan_group_no
+			, a.tray_id
+			, a.order_kind_cd
+			, a.order_type_cd
+			, a.tray_order_sort
+			, a.emergency_yn
+			, a.input_date
+			, b.line_no
+			, b.rack_id
+			, b.rack_cell_x_axis
+			, b.rack_cell_y_axis
+			, a.excute_yn
+			, a.tray_status_cd
+			, a.cancel_yn
+			, a.reg_dt
+			, a.mod_dt
+			, a.if_work_tray_id
+			, a.ref_if_id
+		FROM wmd_work_plan_tray a
+			inner join wmd_tray_location b
+			ON a.tray_id = b.tray_id
+		WHERE a.line_no = #{param.lineNo}
+			AND a.tray_status_cd = 'READY'
+			AND a.cancel_yn = 'N'
+			AND a.excute_yn = 'N'
+		<if test=" param != null and param.orderTypeCd != null and param.orderTypeCd != '' ">
+			AND a.order_type_cd = #{param.orderTypeCd}
+		</if>
+		<if test=' param != null and param.emergencyYn != null and param.emergencyYn == "Y" '>
+			AND a.emergency_yn = #{param.emergencyYn}
+		</if>
+		<if test=' param != null and param.emergencyYn != null and param.emergencyYn == "N" '>
+			AND a.emergency_yn = #{param.emergencyYn}
+			AND a.plan_group_no = #{param.planGroupNo}
+		</if>
+		ORDER BY a.emergency_yn DESC, a.tray_order_sort, a.reg_dt
+		OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+	</select>
+	
+	<select id="selectInterfaceOrderTrayList" resultType="com.s3s.solutions.eone.service.wmd.workplantray.WorkPlanTrayVO">
+	/* WorkPlanTrayMapper-postgresql selectInterfaceOrderTrayList */
+		SELECT
+			*
+		FROM wmd_work_plan_tray AS wwpt
+		WHERE plan_group_no IN (
+			SELECT
+				plan_group_no
+			FROM wmd_work_plan_tray
+			WHERE plan_no = #{planNo}
+		)
+		AND tray_status_cd = 'READY'
+		AND line_no = #{lineNo}
+		AND cancel_yn = 'N'
+		AND NOT EXISTS (
+			SELECT tray_id
+			FROM wmd_order_work as wow
+			WHERE order_id = #{orderId}
+				AND wwpt.tray_id = wow.tray_id
+		)
+		ORDER BY plan_no
+	</select>
+
+	
+</mapper>

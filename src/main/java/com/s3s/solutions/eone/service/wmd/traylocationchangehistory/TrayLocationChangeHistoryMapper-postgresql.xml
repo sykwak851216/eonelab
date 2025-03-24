@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.traylocationchangehistory.TrayLocationChangeHistoryMapper">
+
+	<select id="selectBufferDetailByOrderGroupId" resultType="com.s3s.solutions.eone.service.wmd.traylocationchangehistory.TrayLocationChangeHistoryVO">
+		/* TrayLocationChangeHistoryDTOMapper-postgresql selectBufferDetailByOrderGroupId */
+		SELECT
+			  history_seq
+			, tray_id
+			, from_loc_type_cd
+			, to_loc_type_cd
+			, buffer_id
+			, rack_cell_id
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, order_id
+			, order_group_id
+			, change_dt
+			, input_date
+		FROM wmd_tray_location_change_history
+		WHERE tray_id = #{param.trayId}
+			AND to_loc_type_cd = #{param.toLocTypeCd}
+			AND order_group_id = #{param.orderGroupId}
+	</select>
+
+</mapper>

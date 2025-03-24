@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.traylocationchangehistory.TrayLocationChangeHistoryMapper">
+
+	<sql id="trayLocationChangeHistorySelect">
+		SELECT
+			  history_seq
+			, tray_id
+			, from_loc_type_cd
+			, to_loc_type_cd
+			, buffer_id
+			, rack_cell_id
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, order_id
+			, order_group_id
+			, change_dt
+			, input_date
+		FROM wmd_tray_location_change_history
+	</sql>
+
+
+	<sql id="trayLocationChangeHistoryListWhere">
+		<where>
+			<if test=" param != null and param.historySeq != null and param.historySeq != '' ">
+				AND history_seq = #{param.historySeq}
+			</if>
+			<if test=" param != null and param.trayId != null and param.trayId != '' ">
+				AND tray_id = #{param.trayId}
+			</if>
+			<if test=" param != null and param.fromLocTypeCd != null and param.fromLocTypeCd != '' ">
+				AND from_loc_type_cd = #{param.fromLocTypeCd}
+			</if>
+			<if test=" param != null and param.toLocTypeCd != null and param.toLocTypeCd != '' ">
+				AND to_loc_type_cd = #{param.toLocTypeCd}
+			</if>
+			<if test=" param != null and param.bufferId != null and param.bufferId != '' ">
+				AND buffer_id = #{param.bufferId}
+			</if>
+			<if test=" param != null and param.rackCellId != null and param.rackCellId != '' ">
+				AND rack_cell_id = #{param.rackCellId}
+			</if>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.rackCellXAxis != null ">
+				AND rack_cell_x_axis = #{param.rackCellXAxis}
+			</if>
+			<if test=" param != null and param.rackCellYAxis != null ">
+				AND rack_cell_y_axis = #{param.rackCellYAxis}
+			</if>
+			<if test=" param != null and param.orderId != null and param.orderId != '' ">
+				AND order_id = #{param.orderId}
+			</if>
+			<if test=" param != null and param.orderGroupId != null and param.orderGroupId != '' ">
+				AND order_group_id = #{param.orderGroupId}
+			</if>
+			<if test=" param != null and param.changeDt != null and param.changeDt != '' ">
+				AND change_dt = #{param.changeDt}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.traylocationchangehistory.TrayLocationChangeHistoryVO">
+		/* TrayLocationChangeHistoryDTOMapper-postgresql selectList */
+		<include refid="trayLocationChangeHistorySelect" />
+		<include refid="trayLocationChangeHistoryListWhere" />
+		ORDER BY history_seq
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* TrayLocationChangeHistoryDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="trayLocationChangeHistorySelect" />
+			<include refid="trayLocationChangeHistoryListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.traylocationchangehistory.TrayLocationChangeHistoryVO">
+		/* TrayLocationChangeHistoryDTOMapper-postgresql selectDetail */
+		<include refid="trayLocationChangeHistorySelect" />
+		WHERE history_seq = #{historySeq}
+	</select>
+
+
+	<insert id="insert">
+		/* TrayLocationChangeHistoryDTOMapper-postgresql insert */
+		INSERT INTO wmd_tray_location_change_history
+		(
+			  history_seq
+			, tray_id
+			, from_loc_type_cd
+			, to_loc_type_cd
+			, buffer_id
+			, rack_cell_id
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, order_id
+			, order_group_id
+			, change_dt
+			, input_date
+		)
+		VALUES
+		(
+			  #{historySeq}
+			, #{trayId}
+			, #{fromLocTypeCd}
+			, #{toLocTypeCd}
+			, #{bufferId}
+			, #{rackCellId}
+			, #{rackId}
+			, #{rackCellXAxis}::integer
+			, #{rackCellYAxis}::integer
+			, #{orderId}
+			, #{orderGroupId}
+			, #{changeDt}::timestamp
+			, #{inputDate}
+		)
+	</insert>
+
+
+	<update id="update">
+		/* TrayLocationChangeHistoryDTOMapper-postgresql update */
+		UPDATE wmd_tray_location_change_history
+		<set>
+			<if test=" trayId != null and trayId != '' ">
+				tray_id = #{trayId} ,
+			</if>
+			<if test=" fromLocTypeCd != null and fromLocTypeCd != '' ">
+				from_loc_type_cd = #{fromLocTypeCd} ,
+			</if>
+			<if test=" toLocTypeCd != null and toLocTypeCd != '' ">
+				to_loc_type_cd = #{toLocTypeCd} ,
+			</if>
+			<if test=" bufferId != null and bufferId != '' ">
+				buffer_id = #{bufferId} ,
+			</if>
+			<if test=" rackCellId != null and rackCellId != '' ">
+				rack_cell_id = #{rackCellId} ,
+			</if>
+			<if test=" rackId != null and rackId != '' ">
+				rack_id = #{rackId} ,
+			</if>
+			<if test=" rackCellXAxis != null ">
+				rack_cell_x_axis = #{rackCellXAxis}::integer ,
+			</if>
+			<if test=" rackCellYAxis != null ">
+				rack_cell_y_axis = #{rackCellYAxis}::integer ,
+			</if>
+			<if test=" orderId != null and orderId != '' ">
+				order_id = #{orderId} ,
+			</if>
+			<if test=" orderGroupId != null and orderGroupId != '' ">
+				order_group_id = #{orderGroupId} ,
+			</if>
+			<if test=" changeDt != null and changeDt != '' ">
+				change_dt = #{changeDt}::timestamp ,
+			</if>
+			<if test=" inputDate != null and inputDate != '' ">
+				input_date = #{inputDate} ,
+			</if>
+		</set>
+		WHERE history_seq = #{historySeq}
+	</update>
+
+
+	<delete id="delete">
+		/* TrayLocationChangeHistoryDTOMapper-postgresql delete */
+		DELETE FROM wmd_tray_location_change_history
+		WHERE history_seq = #{historySeq}
+	</delete>
+
+
+	<update id="merge">
+		/* TrayLocationChangeHistoryDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{historySeq}::text AS history_seq
+				, #{trayId}::text AS tray_id
+				, #{fromLocTypeCd}::text AS from_loc_type_cd
+				, #{toLocTypeCd}::text AS to_loc_type_cd
+				, #{bufferId}::text AS buffer_id
+				, #{rackCellId}::text AS rack_cell_id
+				, #{rackId}::text AS rack_id
+				, #{rackCellXAxis}::Integer AS rack_cell_x_axis
+				, #{rackCellYAxis}::Integer AS rack_cell_y_axis
+				, #{orderId}::text AS order_id
+				, #{orderGroupId}::text AS order_group_id
+				, #{changeDt}::text AS change_dt
+				, #{inputDate}::text AS input_date
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_tray_location_change_history U
+			<set>
+				<if test=" trayId != null and trayId != '' ">
+					tray_id = #{trayId} ,
+				</if>
+				<if test=" fromLocTypeCd != null and fromLocTypeCd != '' ">
+					from_loc_type_cd = #{fromLocTypeCd} ,
+				</if>
+				<if test=" toLocTypeCd != null and toLocTypeCd != '' ">
+					to_loc_type_cd = #{toLocTypeCd} ,
+				</if>
+				<if test=" bufferId != null and bufferId != '' ">
+					buffer_id = #{bufferId} ,
+				</if>
+				<if test=" rackCellId != null and rackCellId != '' ">
+					rack_cell_id = #{rackCellId} ,
+				</if>
+				<if test=" rackId != null and rackId != '' ">
+					rack_id = #{rackId} ,
+				</if>
+				<if test=" rackCellXAxis != null ">
+					rack_cell_x_axis = #{rackCellXAxis}::integer ,
+				</if>
+				<if test=" rackCellYAxis != null ">
+					rack_cell_y_axis = #{rackCellYAxis}::integer ,
+				</if>
+				<if test=" orderId != null and orderId != '' ">
+					order_id = #{orderId} ,
+				</if>
+				<if test=" orderGroupId != null and orderGroupId != '' ">
+					order_group_id = #{orderGroupId} ,
+				</if>
+				<if test=" changeDt != null and changeDt != '' ">
+					change_dt = #{changeDt}::timestamp ,
+				</if>
+				<if test=" inputDate != null and inputDate != '' ">
+					input_date = #{inputDate} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.history_seq = T.history_seq
+		)
+		INSERT INTO wmd_tray_location_change_history
+		(
+			  history_seq
+			, tray_id
+			, from_loc_type_cd
+			, to_loc_type_cd
+			, buffer_id
+			, rack_cell_id
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, order_id
+			, order_group_id
+			, change_dt
+			, input_date
+		)
+		SELECT
+			  T.history_seq
+			, T.tray_id
+			, T.from_loc_type_cd
+			, T.to_loc_type_cd
+			, T.buffer_id
+			, T.rack_cell_id
+			, T.rack_id
+			, T.rack_cell_x_axis
+			, T.rack_cell_y_axis
+			, T.order_id
+			, T.order_group_id
+			, T.change_dt
+			, T.input_date
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			history_seq
+		FROM wmd_tray_location_change_history AS TMP
+		WHERE TMP.history_seq = T.history_seq
+		)
+	</update>
+
+
+</mapper>

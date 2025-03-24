@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.exchange.job.JobMapper">
+
+	<sql id="jobSelect">
+		SELECT
+			  if_id
+			, if_type_cd
+			, ent_ymd
+			, req_dt
+			, result
+		FROM wmd_interface
+	</sql>
+
+
+	<sql id="jobListWhere">
+		<where>
+			<if test=" param != null and param.ifId != null and param.ifId != '' ">
+				AND if_id = #{param.ifId}
+			</if>
+			<if test=" param != null and param.ifTypeCd != null and param.ifTypeCd != '' ">
+				AND if_type_cd = #{param.ifTypeCd}
+			</if>
+			<if test=" param != null and param.entYmd != null and param.entYmd != '' ">
+				AND ent_ymd = #{param.entYmd}
+			</if>
+			<if test=" param != null and param.reqDt != null and param.reqDt != '' ">
+				AND req_dt = #{param.reqDt}
+			</if>
+			<if test=" param != null and param.searchStartDt != null and param.searchStartDt != '' and param.searchEndDt != null and param.searchEndDt != '' ">
+				AND req_dt between to_timestamp(#{param.searchStartDt} , 'YYYY-MM-DD HH24:MI:SS') and to_timestamp(#{param.searchEndDt}, 'YYYY-MM-DD HH24:MI:SS')
+			</if>
+			<if test=" param != null and param.result != null and param.result != '' ">
+				AND result = #{param.result}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.exchange.job.JobVO">
+		/* JobMTOMapper-postgresql selectList */
+		<include refid="jobSelect" />
+		<include refid="jobListWhere" />
+		ORDER BY if_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* JobMTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="jobSelect" />
+			<include refid="jobListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.exchange.job.JobVO">
+		/* JobMTOMapper-postgresql selectDetail */
+		<include refid="jobSelect" />
+		WHERE if_id = #{ifId}
+	</select>
+
+
+	<insert id="insert">
+		/* JobMTOMapper-postgresql insert */
+		INSERT INTO wmd_interface
+		(
+			  if_id
+			, if_type_cd
+			, ent_ymd
+			, req_dt
+			, result
+		)
+		VALUES
+		(
+			  #{ifId}
+			, #{ifTypeCd}
+			, #{entYmd}
+			, #{reqDt}::timestamp
+			, #{result}
+		)
+	</insert>
+
+
+	<update id="update">
+		/* JobMTOMapper-postgresql update */
+		UPDATE wmd_interface
+		<set>
+			<if test=" reqDt != null and reqDt != '' ">
+				req_dt = #{reqDt} ,
+			</if>
+			<if test=" result != null and result != '' ">
+				result = #{result} ,
+			</if>
+		</set>
+		WHERE if_id = #{ifId}
+	</update>
+
+
+	<update id="delete">
+		/* JobMTOMapper-postgresql delete */
+		DELETE FROM wmd_interface
+		WHERE if_id = #{ifId}
+	</update>
+
+
+	<update id="merge">
+		/* JobMTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{ifId}::text AS if_id
+				, #{ifTypeCd}::text AS if_type_cd
+				, #{reqDt}::timestamp AS req_dt
+				, #{result}::text AS result
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_interface U
+			<set>
+				<if test=" ifTypeCd != null and ifTypeCd != '' ">
+					if_type_cd = #{ifTypeCd} ,
+				</if>
+				<if test=" result != null and result != '' ">
+					result = #{result} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.if_id = T.if_id
+		)
+		INSERT INTO wmd_interface
+		(
+			  if_id
+			, if_type_cd
+			, req_dt
+			, result
+		)
+		SELECT
+			  T.if_id
+			, T.if_type_cd
+			, T.req_dt
+			, T.result
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			if_id
+		FROM wmd_interface AS TMP
+		WHERE TMP.if_id = T.if_id
+		)
+	</update>
+
+
+</mapper>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables>
+	<menu id="mdm" >
+		<menuName>기준정보</menuName>
+		<menuUrl>/solutions/eone/mdm/company/company-list</menuUrl>
+		<menu id="company">
+			<menuName>회사</menuName>
+			<menuUrl>/solutions/eone/mdm/company/company-list</menuUrl>
+		</menu>
+	</menu>
+</tables>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.order.OrderMapper">
+
+	<sql id="select">
+		SELECT
+			  order_id
+			, order_group_id
+			, order_type_cd
+			, order_date
+			, order_tray_qty
+			, work_tray_qty
+			, order_start_dt
+			, order_end_dt
+			, order_status_cd
+			, order_finish_type_cd
+		FROM wmd_order
+	</sql>
+	<select id="selectOrderDetail" resultType="com.s3s.solutions.eone.service.wmd.order.OrderVO">
+		/* OrderMapper-postgresql selectOrderDetail */
+		SELECT
+			  wo.order_id
+			, wo.order_group_id
+			, wo.line_no
+			, wo.order_type_cd
+			, wo.order_date
+			, wo.order_tray_qty
+			, wo.work_tray_qty
+			, wo.order_start_dt
+			, wo.order_end_dt
+			, wo.order_status_cd
+			, wo.order_finish_type_cd
+			, wog.order_group_type_cd
+		FROM wmd_order wo
+		INNER JOIN wmd_order_group wog
+			ON wo.order_group_id = wog.order_group_id
+			WHERE wo.order_id = #{orderId}
+	</select>
+
+	<select id="selectReadyOrIngOrder" resultType="com.s3s.solutions.eone.service.wmd.order.OrderVO">
+		/* OrderDTOMapper-postgresql selectReadyOrIngOrder */
+		<include refid="select" />
+		WHERE order_status_cd IN ('READY', 'ING')
+		limit 1
+	</select>
+	
+	<select id="selectReadyOrIngOrderByLineNo" resultType="com.s3s.solutions.eone.service.wmd.order.OrderVO">
+		/* OrderDTOMapper-postgresql selectReadyOrIngOrderByLineNo */
+		<include refid="select" />
+		WHERE order_status_cd IN ('READY', 'ING')
+		AND line_no = #{lineNo}
+		limit 1
+	</select>
+
+</mapper>

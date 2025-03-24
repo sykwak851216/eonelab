@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.exchange.workjobtray.WorkJobTrayMapper">
+
+	<sql id="workJobTrayMapListWhere">
+		<if test=" param != null and param.searchStartDt != null and param.searchStartDt != '' and param.searchEndDt != null and param.searchEndDt != '' ">
+			AND inf.req_dt between to_timestamp(#{param.searchStartDt} , 'YYYY-MM-DD HH24:MI:SS') and to_timestamp(#{param.searchEndDt}, 'YYYY-MM-DD HH24:MI:SS')
+		</if>
+		<if test=" param != null and param.rtnResult != null and param.rtnResult != '' ">
+			AND inf.result = #{param.rtnResult}
+		</if>
+	</sql>
+	
+	<select id="selectYudoWorkPagingList" resultType="com.s3s.solutions.eone.exchange.workjobtray.WorkJobTrayVO">
+		/* WorkJobTrayMapper-postgresql selectYudoWorkPagingList */
+		SELECT
+			inf.req_dt
+			, inf_tray.if_work_type_cd
+			, inf_tray.ent_ymd
+			, inf_tray.tray_id
+			, inf_tray.result_yn
+			, inf_tray.remark
+			, inf_tray.line_no
+			, inf_tray.rack_id
+			, inf_tray.rack_cell_x_axis
+			, inf_tray.rack_cell_y_axis
+			, inf_tray.seq
+			, inf.result as rtn_result
+		FROM wmd_interface as inf
+		inner join wmd_interface_work_tray as inf_tray
+			on inf.if_id = inf_tray.if_id
+		where inf.if_type_cd = 'WORK'
+		<include refid="workJobTrayMapListWhere" />
+		ORDER BY inf.if_id, inf_tray.if_work_tray_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectYudoWorkListTotalRows" resultType="int">
+		/* WorkJobTrayMapper-postgresql selectYudoWorkListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+				SELECT
+				inf.req_dt
+				, inf_tray.if_work_type_cd
+				, inf_tray.ent_ymd
+				, inf_tray.tray_id
+				, inf_tray.result_yn
+				, inf_tray.remark
+				, inf_tray.line_no
+				, inf_tray.rack_id
+				, inf_tray.rack_cell_x_axis
+				, inf_tray.rack_cell_y_axis
+				, inf_tray.seq
+				, inf.result
+			FROM wmd_interface as inf
+			inner join wmd_interface_work_tray as inf_tray
+				on inf.if_id = inf_tray.if_id
+			where inf.if_type_cd = 'WORK'
+			<include refid="workJobTrayMapListWhere" />
+		) AS pageTable
+	</select>
+	
+	<select id="selectDetailByPlanNo" resultType="com.s3s.solutions.eone.exchange.workjobtray.WorkJobTrayVO">
+		/* WorkJobTrayMapper-postgresql selectDetailByPlanNo */
+		SELECT
+			C.if_work_tray_id
+			, C.if_id
+			, C.ref_if_id
+			, C.tray_id
+			, C.if_work_type_cd
+			, C.result_yn
+			, C.emergency_yn
+			, C.line_no
+			, C.rack_id
+			, C.rack_cell_x_axis
+			, C.rack_cell_y_axis
+			, C.ent_ymd
+			, C.remark
+			, C.seq
+		FROM wmd_order_work A
+			INNER JOIN wmd_work_plan_tray B
+				ON A.plan_no = B.plan_no
+			INNER JOIN wmd_interface_work_tray C
+				ON B.if_work_tray_id = C.if_work_tray_id
+		WHERE A.plan_no = #{param.planNo}
+	</select>
+
+
+
+</mapper>

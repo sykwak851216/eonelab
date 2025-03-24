@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.order.OrderMapper">
+
+	<sql id="orderSelect">
+		SELECT
+			  order_id
+			, order_group_id
+			, line_no
+			, order_type_cd
+			, order_date
+			, order_tray_qty
+			, work_tray_qty
+			, order_start_dt
+			, order_end_dt
+			, order_status_cd
+			, order_finish_type_cd
+		FROM wmd_order
+	</sql>
+
+
+	<sql id="orderListWhere">
+		<where>
+			<if test=" param != null and param.orderId != null and param.orderId != '' ">
+				AND order_id = #{param.orderId}
+			</if>
+			<if test=" param != null and param.orderGroupId != null and param.orderGroupId != '' ">
+				AND order_group_id = #{param.orderGroupId}
+			</if>
+			<if test=" param != null and param.lineNo != null and param.lineNo != '' ">
+				AND line_no = #{param.lineNo}
+			</if>
+			<if test=" param != null and param.orderTypeCd != null and param.orderTypeCd != '' ">
+				AND order_type_cd = #{param.orderTypeCd}
+			</if>
+			<if test=" param != null and param.orderDate != null and param.orderDate != '' ">
+				AND order_date = #{param.orderDate}
+			</if>
+			<if test=" param != null and param.orderTrayQty != null ">
+				AND order_tray_qty = #{param.orderTrayQty}
+			</if>
+			<if test=" param != null and param.workTrayQty != null ">
+				AND work_tray_qty = #{param.workTrayQty}
+			</if>
+			<if test=" param != null and param.orderStartDt != null and param.orderStartDt != '' ">
+				AND order_start_dt = #{param.orderStartDt}
+			</if>
+			<if test=" param != null and param.orderEndDt != null and param.orderEndDt != '' ">
+				AND order_end_dt = #{param.orderEndDt}
+			</if>
+			<if test=" param != null and param.orderStatusCd != null and param.orderStatusCd != '' ">
+				AND order_status_cd = #{param.orderStatusCd}
+			</if>
+			<if test=" param != null and param.orderFinishTypeCd != null and param.orderFinishTypeCd != '' ">
+				AND order_finish_type_cd = #{param.orderFinishTypeCd}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.order.OrderVO">
+		/* OrderDTOMapper-postgresql selectList */
+		<include refid="orderSelect" />
+		<include refid="orderListWhere" />
+		ORDER BY order_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* OrderDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="orderSelect" />
+			<include refid="orderListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.order.OrderVO">
+		/* OrderDTOMapper-postgresql selectDetail */
+		<include refid="orderSelect" />
+		WHERE order_id = #{orderId}
+	</select>
+
+
+	<insert id="insert">
+		/* OrderDTOMapper-postgresql insert */
+		INSERT INTO wmd_order
+		(
+			  order_id
+			, order_group_id
+			, line_no
+			, order_type_cd
+			, order_date
+			, order_tray_qty
+			, work_tray_qty
+			, order_start_dt
+			, order_end_dt
+			, order_status_cd
+			, order_finish_type_cd
+		)
+		VALUES
+		(
+			  #{orderId}
+			, #{orderGroupId}
+			, #{lineNo}
+			, #{orderTypeCd}
+			, #{orderDate}
+			, #{orderTrayQty}
+			, #{workTrayQty}
+			, #{orderStartDt}::timestamp
+			, #{orderEndDt}::timestamp
+			, #{orderStatusCd}
+			, #{orderFinishTypeCd}
+		)
+	</insert>
+
+
+	<update id="update">
+		/* OrderDTOMapper-postgresql update */
+		UPDATE wmd_order
+		<set>
+			<if test=" orderGroupId != null and orderGroupId != '' ">
+				order_group_id = #{orderGroupId} ,
+			</if>
+			<if test=" orderTypeCd != null and orderTypeCd != '' ">
+				order_type_cd = #{orderTypeCd} ,
+			</if>
+			<if test=" orderDate != null and orderDate != '' ">
+				order_date = #{orderDate} ,
+			</if>
+			<if test=" orderTrayQty != null ">
+				order_tray_qty = #{orderTrayQty} ,
+			</if>
+			<if test=" workTrayQty != null ">
+				work_tray_qty = #{workTrayQty} ,
+			</if>
+			<if test=" orderStartDt != null and orderStartDt != '' ">
+				order_start_dt = #{orderStartDt}::timestamp ,
+			</if>
+			<if test=" orderEndDt != null and orderEndDt != '' ">
+				order_end_dt = #{orderEndDt}::timestamp ,
+			</if>
+			<if test=" orderStatusCd != null and orderStatusCd != '' ">
+				order_status_cd = #{orderStatusCd} ,
+			</if>
+			<if test=" orderFinishTypeCd != null and orderFinishTypeCd != '' ">
+				order_finish_type_cd = #{orderFinishTypeCd} ,
+			</if>
+		</set>
+		WHERE order_id = #{orderId}
+	</update>
+
+
+	<delete id="delete">
+		/* OrderDTOMapper-postgresql delete */
+		DELETE FROM wmd_order
+		WHERE order_id = #{orderId}
+	</delete>
+
+
+	<update id="merge">
+		/* OrderDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{orderId}::text AS order_id
+				, #{orderGroupId}::text AS order_group_id
+				, #{lineNo}::text AS line_no
+				, #{orderTypeCd}::text AS order_type_cd
+				, #{orderDate}::text AS order_date
+				, #{orderTrayQty}::Integer AS order_tray_qty
+				, #{workTrayQty}::Integer AS work_tray_qty
+				, #{orderStartDt}::timestamp AS order_start_dt
+				, #{orderEndDt}::timestamp AS order_end_dt
+				, #{orderStatusCd}::text AS order_status_cd
+				, #{orderFinishTypeCd}::text AS order_finish_type_cd
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_order U
+			<set>
+				<if test=" orderGroupId != null and orderGroupId != '' ">
+					order_group_id = #{orderGroupId} ,
+				</if>
+				<if test=" orderTypeCd != null and orderTypeCd != '' ">
+					order_type_cd = #{orderTypeCd} ,
+				</if>
+				<if test=" orderDate != null and orderDate != '' ">
+					order_date = #{orderDate} ,
+				</if>
+				<if test=" orderTrayQty != null ">
+					order_tray_qty = #{orderTrayQty} ,
+				</if>
+				<if test=" workTrayQty != null ">
+					work_tray_qty = #{workTrayQty} ,
+				</if>
+				<if test=" orderStartDt != null and orderStartDt != '' ">
+					order_start_dt = #{orderStartDt}::timestamp ,
+				</if>
+				<if test=" orderEndDt != null and orderEndDt != '' ">
+					order_end_dt = #{orderEndDt}::timestamp ,
+				</if>
+				<if test=" orderStatusCd != null and orderStatusCd != '' ">
+					order_status_cd = #{orderStatusCd} ,
+				</if>
+				<if test=" orderFinishTypeCd != null and orderFinishTypeCd != '' ">
+					order_finish_type_cd = #{orderFinishTypeCd} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.order_id = T.order_id
+		)
+		INSERT INTO wmd_order
+		(
+			  order_id
+			, order_group_id
+			, line_no
+			, order_type_cd
+			, order_date
+			, order_tray_qty
+			, work_tray_qty
+			, order_start_dt
+			, order_end_dt
+			, order_status_cd
+			, order_finish_type_cd
+		)
+		SELECT
+			  T.order_id
+			, T.order_group_id
+			, T.line_no
+			, T.order_type_cd
+			, T.order_date
+			, T.order_tray_qty
+			, T.work_tray_qty
+			, T.order_start_dt
+			, T.order_end_dt
+			, T.order_status_cd
+			, T.order_finish_type_cd
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			order_id
+		FROM wmd_order AS TMP
+		WHERE TMP.order_id = T.order_id
+		)
+	</update>
+
+
+</mapper>

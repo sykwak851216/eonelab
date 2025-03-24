@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.ordergroup.OrderGroupMapper">
+
+
+	<select id="selectReadyOrIngOrderGroup" resultType="com.s3s.solutions.eone.service.wmd.ordergroup.OrderGroupVO">
+		/* OrderGroupMapper-postgresql selectReadyOrIngOrderGroup */
+		SELECT
+		 *
+		FROM wmd_order_group
+		WHERE order_group_status_cd IN ('READY','ING')
+		ORDER BY order_group_date DESC
+		limit 1
+	</select>
+	
+	<select id="selectReadyOrIngOrderGroupByLineNo" resultType="com.s3s.solutions.eone.service.wmd.ordergroup.OrderGroupVO">
+		/* OrderGroupMapper-postgresql selectReadyOrIngOrderGroupByLineNo */
+		SELECT
+		 * 
+		FROM wmd_order_group
+		WHERE order_group_status_cd IN ('READY','ING')
+		AND line_no = #{lineNo}
+		ORDER BY order_group_date DESC
+		limit 1
+	</select>
+
+	<select id="selectIngInquiryOrderGroup" resultType="com.s3s.solutions.eone.service.wmd.ordergroup.OrderGroupVO">
+		/* OrderGroupMapper-postgresql selectIngInquiryOrderGroup */
+		SELECT * FROM wmd_order_group
+		WHERE order_group_status_cd = 'ING'
+			AND order_group_type_cd = 'INQUIRY'
+			AND line_no = #{lineNo}
+		ORDER BY order_group_date DESC
+		limit 1
+	</select>
+	
+	<select id="selectIngOutputInQuiryOrderGroup" resultType="com.s3s.solutions.eone.service.wmd.ordergroup.OrderGroupVO">
+		/* OrderGroupMapper-postgresql selectIngOutputInQuiryOrderGroup */
+		SELECT * FROM wmd_order_group
+		WHERE order_group_status_cd = 'ING'
+			AND line_no = #{lineNo}
+			AND order_group_type_cd IN ('OUTPUT', 'INQUIRY')
+		ORDER BY order_group_date DESC
+		limit 1
+	</select>
+	
+	<select id="selectByOrderId" resultType="com.s3s.solutions.eone.service.wmd.ordergroup.OrderGroupVO">
+		/* OrderGroupMapper-postgresql selectByOrderId */
+		SELECT * FROM wmd_order_group
+		WHERE order_group_id IN (select order_group_id FROM wmd_order where order_id = #{lineNo})
+	</select>
+
+
+</mapper>

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.systemoperationmodestep.SystemOperationModeStepMapper">
+
+	<sql id="systemOperationModeStepSelect">
+		SELECT
+			  system_operation_mode_id
+			, system_operation_mode_step_id
+			, system_operation_mode_step_name
+			, system_operation_mode_step_sort
+			, system_operation_mode_step_start_code
+			, system_operation_mode_step_end_code
+			, system_operation_mode_step_desc
+			, parallel_process_yn
+			, del_yn
+			, reg_dt
+			, reg_id
+			, mod_dt
+			, mod_id
+		FROM wmd_system_operation_mode_step
+	</sql>
+
+
+	<sql id="systemOperationModeStepListWhere">
+		<where>
+			<if test=" param != null and param.systemOperationModeId != null and param.systemOperationModeId != '' ">
+				AND system_operation_mode_id = #{param.systemOperationModeId}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepId != null and param.systemOperationModeStepId != '' ">
+				AND system_operation_mode_step_id = #{param.systemOperationModeStepId}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepName != null and param.systemOperationModeStepName != '' ">
+				AND system_operation_mode_step_name = #{param.systemOperationModeStepName}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepStartCode != null and param.systemOperationModeStepStartCode != '' ">
+				AND system_operation_mode_step_start_code = #{param.systemOperationModeStepStartCode}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepEndCode != null and param.systemOperationModeStepEndCode != '' ">
+				AND system_operation_mode_step_end_code = #{param.systemOperationModeStepEndCode}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepSort != null ">
+				AND system_operation_mode_step_sort = #{param.systemOperationModeStepSort}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepDesc != null and param.systemOperationModeStepDesc != '' ">
+				AND system_operation_mode_step_desc = #{param.systemOperationModeStepDesc}
+			</if>
+			<if test=" param != null and param.parallelProcessYn != null and param.parallelProcessYn != '' ">
+				AND parallel_process_yn = #{param.parallelProcessYn}
+			</if>
+			<if test=" param != null and param.delYn != null and param.delYn != '' ">
+				AND del_yn = #{param.delYn}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.systemoperationmodestep.SystemOperationModeStepVO">
+		/* SystemOperationModeStepDTOMapper-postgresql selectList */
+		<include refid="systemOperationModeStepSelect" />
+		<include refid="systemOperationModeStepListWhere" />
+		ORDER BY system_operation_mode_step_sort
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* SystemOperationModeStepDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="systemOperationModeStepSelect" />
+			<include refid="systemOperationModeStepListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.systemoperationmodestep.SystemOperationModeStepVO">
+		/* SystemOperationModeStepDTOMapper-postgresql selectDetail */
+		<include refid="systemOperationModeStepSelect" />
+		WHERE system_operation_mode_id = #{systemOperationModeId}
+		AND system_operation_mode_step_id = #{systemOperationModeStepId}
+	</select>
+
+
+	<insert id="insert">
+		/* SystemOperationModeStepDTOMapper-postgresql insert */
+		INSERT INTO wmd_system_operation_mode_step
+		(
+			  system_operation_mode_id
+			, system_operation_mode_step_id
+			, system_operation_mode_step_name
+			, system_operation_mode_step_sort
+			, system_operation_mode_step_start_code
+			, system_operation_mode_step_end_code
+			, system_operation_mode_step_desc
+			, parallel_process_yn
+			, reg_dt
+			, reg_id
+		)
+		VALUES
+		(
+			  #{systemOperationModeId}
+			, #{systemOperationModeStepId}
+			, #{systemOperationModeStepName}
+			, #{systemOperationModeStepSort}
+			, #{systemOperationModeStepStartCode}
+			, #{systemOperationModeStepEndCode}
+			, #{systemOperationModeStepDesc}
+			, #{parallelProcessYn}
+			, #{regDt}::timestamp
+			, #{regId}
+		)
+	</insert>
+
+
+	<update id="update">
+		/* SystemOperationModeStepDTOMapper-postgresql update */
+		UPDATE wmd_system_operation_mode_step
+		<set>
+			<if test=" systemOperationModeStepName != null and systemOperationModeStepName != '' ">
+				system_operation_mode_step_name = #{systemOperationModeStepName} ,
+			</if>
+			<if test=" systemOperationModeStepSort != null ">
+				system_operation_mode_step_sort = #{systemOperationModeStepSort} ,
+			</if>
+			<if test=" systemOperationModeStepStartCode != null and systemOperationModeStepStartCode != '' ">
+				system_operation_mode_step_start_code = #{systemOperationModeStepStartCode} ,
+			</if>
+			<if test=" systemOperationModeStepEndCode != null and systemOperationModeStepEndCode != '' ">
+				system_operation_mode_step_end_code = #{systemOperationModeStepEndCode} ,
+			</if>
+			<if test=" systemOperationModeStepDesc != null and systemOperationModeStepDesc != '' ">
+				system_operation_mode_step_desc = #{systemOperationModeStepDesc} ,
+			</if>
+			<if test=" parallelProcessYn != null and parallelProcessYn != '' ">
+				parallel_process_yn = #{parallelProcessYn} ,
+			</if>
+			<if test=" delYn != null and delYn != '' ">
+				del_yn = #{delYn} ,
+			</if>
+			<if test=" modDt != null and modDt != '' ">
+				mod_dt = #{modDt}::timestamp ,
+			</if>
+			<if test=" modId != null and modId != '' ">
+				mod_id = #{modId} ,
+			</if>
+		</set>
+		WHERE system_operation_mode_id = #{systemOperationModeId}
+		AND system_operation_mode_step_id = #{systemOperationModeStepId}
+	</update>
+
+
+	<update id="delete">
+		/* SystemOperationModeStepDTOMapper-postgresql delete */
+		UPDATE wmd_system_operation_mode_step
+		SET del_yn = 'Y'
+			,mod_dt = #{modDt}::timestamp
+			,mod_id = #{modId}
+		WHERE system_operation_mode_id = #{systemOperationModeId}
+		AND system_operation_mode_step_id = #{systemOperationModeStepId}
+	</update>
+
+
+	<update id="merge">
+		/* SystemOperationModeStepDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{systemOperationModeId}::text AS system_operation_mode_id
+				, #{systemOperationModeStepId}::text AS system_operation_mode_step_id
+				, #{systemOperationModeStepName}::text AS system_operation_mode_step_name
+				, #{systemOperationModeStepSort}::Integer AS system_operation_mode_step_sort
+				, #{systemOperationModeStepStartCode}::text AS system_operation_mode_step_start_code
+				, #{systemOperationModeStepEndCode}::text AS system_operation_mode_step_end_code
+				, #{systemOperationModeStepDesc}::text AS system_operation_mode_step_desc
+				, #{parallelProcessYn}::text AS parallel_process_yn
+				, #{regDt}::timestamp AS reg_dt
+				, #{regId}::text AS reg_id
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_system_operation_mode_step U
+			<set>
+				<if test=" systemOperationModeStepName != null and systemOperationModeStepName != '' ">
+					system_operation_mode_step_name = #{systemOperationModeStepName} ,
+				</if>
+				<if test=" systemOperationModeStepSort != null ">
+					system_operation_mode_step_sort = #{systemOperationModeStepSort} ,
+				</if>
+				<if test=" systemOperationModeStepStartCode != null and systemOperationModeStepStartCode != '' ">
+					system_operation_mode_step_start_code = #{systemOperationModeStepStartCode} ,
+				</if>
+				<if test=" systemOperationModeStepEndCode != null and systemOperationModeStepEndCode != '' ">
+					system_operation_mode_step_end_code = #{systemOperationModeStepEndCode} ,
+				</if>
+				<if test=" systemOperationModeStepDesc != null and systemOperationModeStepDesc != '' ">
+					system_operation_mode_step_desc = #{systemOperationModeStepDesc} ,
+				</if>
+				<if test=" parallelProcessYn != null and parallelProcessYn != '' ">
+					parallel_process_yn = #{parallelProcessYn} ,
+				</if>
+				<if test=" delYn != null and delYn != '' ">
+					del_yn = #{delYn} ,
+				</if>
+				<if test=" modDt != null and modDt != '' ">
+					mod_dt = #{modDt}::timestamp ,
+				</if>
+				<if test=" modId != null and modId != '' ">
+					mod_id = #{modId} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.system_operation_mode_id = T.system_operation_mode_id
+				AND U.system_operation_mode_step_id = T.system_operation_mode_step_id
+		)
+		INSERT INTO wmd_system_operation_mode_step
+		(
+			  system_operation_mode_id
+			, system_operation_mode_step_id
+			, system_operation_mode_step_name
+			, system_operation_mode_step_sort
+			, system_operation_mode_step_start_code
+			, system_operation_mode_step_end_code
+			, system_operation_mode_step_desc
+			, parallel_process_yn
+			, reg_dt
+			, reg_id
+		)
+		SELECT
+			  T.system_operation_mode_id
+			, T.system_operation_mode_step_id
+			, T.system_operation_mode_step_name
+			, T.system_operation_mode_step_sort
+			, T.system_operation_mode_step_start_code
+			, S.system_operation_mode_step_end_code
+			, T.system_operation_mode_step_desc
+			, T.parallel_process_yn
+			, T.reg_dt
+			, T.reg_id
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			system_operation_mode_id
+			,system_operation_mode_step_id
+		FROM wmd_system_operation_mode_step AS TMP
+		WHERE TMP.system_operation_mode_id = T.system_operation_mode_id
+		AND TMP.system_operation_mode_step_id = T.system_operation_mode_step_id
+		)
+	</update>
+
+
+</mapper>

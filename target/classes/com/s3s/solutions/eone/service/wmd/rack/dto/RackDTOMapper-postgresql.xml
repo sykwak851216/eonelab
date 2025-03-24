@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.rack.RackMapper">
+
+	<sql id="rackSelect">
+		SELECT
+			  rack_id
+			, rack_name
+			, rack_x_axis_size
+			, rack_y_axis_size
+			, warehouse_id
+			, mc_id
+			, line_no
+			, del_yn
+			, reg_dt
+			, reg_id
+			, mod_dt
+			, mod_id
+		FROM wmd_rack
+	</sql>
+
+
+	<sql id="rackListWhere">
+		<where>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.rackName != null and param.rackName != '' ">
+				AND rack_name = #{param.rackName}
+			</if>
+			<if test=" param != null and param.rackXAxisSize != null ">
+				AND rack_x_axis_size = #{param.rackXAxisSize}
+			</if>
+			<if test=" param != null and param.rackYAxisSize != null ">
+				AND rack_y_axis_size = #{param.rackYAxisSize}
+			</if>
+			<if test=" param != null and param.warehouseId != null and param.warehouseId != '' ">
+				AND warehouse_id = #{param.warehouseId}
+			</if>
+			<if test=" param != null and param.mcId != null and param.mcId != '' ">
+				AND mc_id = #{param.mcId}
+			</if>
+			<if test=" param != null and param.lineNo != null and param.lineNo != '' ">
+				AND line_no = #{param.lineNo}
+			</if>
+			<if test=" param != null and param.delYn != null and param.delYn != '' ">
+				AND del_yn = #{param.delYn}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.rack.RackVO">
+		/* RackDTOMapper-postgresql selectList */
+		<include refid="rackSelect" />
+		<include refid="rackListWhere" />
+		ORDER BY rack_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* RackDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="rackSelect" />
+			<include refid="rackListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.rack.RackVO">
+		/* RackDTOMapper-postgresql selectDetail */
+		<include refid="rackSelect" />
+		WHERE rack_id = #{rackId}
+	</select>
+
+
+	<insert id="insert">
+		/* RackDTOMapper-postgresql insert */
+		INSERT INTO wmd_rack
+		(
+			  rack_id
+			, rack_name
+			, rack_x_axis_size
+			, rack_y_axis_size
+			, warehouse_id
+			, mc_id
+			, line_no
+			, reg_dt
+			, reg_id
+		)
+		VALUES
+		(
+			  #{rackId}
+			, #{rackName}
+			, #{rackXAxisSize}
+			, #{rackYAxisSize}
+			, #{warehouseId}
+			, #{mcId}
+			, #{lineNo}
+			, #{regDt}::timestamp
+			, #{regId}
+		)
+	</insert>
+
+
+	<update id="update">
+		/* RackDTOMapper-postgresql update */
+		UPDATE wmd_rack
+		<set>
+			<if test=" rackName != null and rackName != '' ">
+				rack_name = #{rackName} ,
+			</if>
+			<if test=" rackXAxisSize != null ">
+				rack_x_axis_size = #{rackXAxisSize} ,
+			</if>
+			<if test=" rackYAxisSize != null ">
+				rack_y_axis_size = #{rackYAxisSize} ,
+			</if>
+			<if test=" warehouseId != null and warehouseId != '' ">
+				warehouse_id = #{warehouseId} ,
+			</if>
+			<if test=" mcId != null and mcId != '' ">
+				mc_id = #{mcId} ,
+			</if>
+			<if test=" lineNo != null and lineNo != '' ">
+				AND line_no = #{lineNo} ,
+			</if>
+			<if test=" delYn != null and delYn != '' ">
+				del_yn = #{delYn} ,
+			</if>
+			<if test=" modDt != null and modDt != '' ">
+				mod_dt = #{modDt}::timestamp ,
+			</if>
+			<if test=" modId != null and modId != '' ">
+				mod_id = #{modId} ,
+			</if>
+		</set>
+		WHERE rack_id = #{rackId}
+	</update>
+
+
+	<update id="delete">
+		/* RackDTOMapper-postgresql delete */
+		UPDATE wmd_rack
+		SET del_yn = 'Y'
+			,mod_dt = #{modDt}::timestamp
+			,mod_id = #{modId}
+		WHERE rack_id = #{rackId}
+	</update>
+
+
+	<update id="merge">
+		/* RackDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{rackId}::text AS rack_id
+				, #{rackName}::text AS rack_name
+				, #{rackXAxisSize}::Integer AS rack_x_axis_size
+				, #{rackYAxisSize}::Integer AS rack_y_axis_size
+				, #{warehouseId}::text AS warehouse_id
+				, #{mcId}::text AS mc_id
+				, #{lineNo}::text AS line_no
+				, #{regDt}::timestamp AS reg_dt
+				, #{regId}::text AS reg_id
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_rack U
+			<set>
+				<if test=" rackName != null and rackName != '' ">
+					rack_name = #{rackName} ,
+				</if>
+				<if test=" rackXAxisSize != null ">
+					rack_x_axis_size = #{rackXAxisSize} ,
+				</if>
+				<if test=" rackYAxisSize != null ">
+					rack_y_axis_size = #{rackYAxisSize} ,
+				</if>
+				<if test=" warehouseId != null and warehouseId != '' ">
+					warehouse_id = #{warehouseId} ,
+				</if>
+				<if test=" mcId != null and mcId != '' ">
+					mc_id = #{mcId} ,
+				</if>
+				<if test=" lineNo != null and lineNo != '' ">
+					line_no = #{lineNo} ,
+				</if>
+				<if test=" delYn != null and delYn != '' ">
+					del_yn = #{delYn} ,
+				</if>
+				<if test=" modDt != null and modDt != '' ">
+					mod_dt = #{modDt}::timestamp ,
+				</if>
+				<if test=" modId != null and modId != '' ">
+					mod_id = #{modId} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.rack_id = T.rack_id
+		)
+		INSERT INTO wmd_rack
+		(
+			  rack_id
+			, rack_name
+			, rack_x_axis_size
+			, rack_y_axis_size
+			, warehouse_id
+			, mc_id
+			, line_no
+			, reg_dt
+			, reg_id
+		)
+		SELECT
+			  T.rack_id
+			, T.rack_name
+			, T.rack_x_axis_size
+			, T.rack_y_axis_size
+			, T.warehouse_id
+			, T.mc_id
+			, T.line_no
+			, T.reg_dt
+			, T.reg_id
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			rack_id
+		FROM wmd_rack AS TMP
+		WHERE TMP.rack_id = T.rack_id
+		)
+	</update>
+
+
+</mapper>

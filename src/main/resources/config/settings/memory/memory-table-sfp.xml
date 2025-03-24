@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables refDataSourceBean="dataSource.sfp">
+
+	<table name="sys_variable">
+		<keys>
+			<key>variableGroupCd</key>
+			<key>variableCd</key>
+		</keys>
+		<value>variableValue</value>
+		<group key="variableGroupCd"/>
+	</table>
+	<table name="sys_user">
+		<keys>
+			<key>userId</key>
+		</keys>
+		<value>userName</value>
+	</table>
+	<table name="sys_user_role">
+		<keys>
+			<key>roleId</key>
+		</keys>
+		<value>roleName</value>
+	</table>
+	<table name="sys_code_master">
+		<keys>
+			<key>masterCd</key>
+		</keys>
+		<value>masterName</value>
+	</table>
+	<table name="sys_code_slave">
+		<keys>
+			<key>masterCd</key>
+			<key>slaveCd</key>
+		</keys>
+		<value>slaveName</value>
+		<group key="masterCd"/>
+	</table>
+	<table name="sys_resource_group">
+		<keys>
+			<key>resourceGroupId</key>
+		</keys>
+		<value>resourceGroupName</value>
+		<group key="resourceGroupId"/>
+	</table>
+	<table name="sys_menu">
+		<keys>
+			<key>menuId</key>
+		</keys>
+		<value>menuName</value>
+	</table>
+	<table name="sys_unit">
+		<keys>
+			<key>unitTypeCd</key>
+			<key>unitCd</key>
+		</keys>
+		<value>unit</value>
+	</table>
+	<table name="sys_unit_type">
+		<keys>
+			<key>unitTypeCd</key>
+		</keys>
+		<value>unitTypeName</value>
+	</table>
+	<table name="mdm_holiday">
+		<keys>
+			<key>holidayYmd</key>
+		</keys>
+		<value>holidayName</value>
+	</table>
+</tables>

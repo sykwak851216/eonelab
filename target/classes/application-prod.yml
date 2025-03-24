@@ -1,0 +1,48 @@
+sfp:
+  mybatis:
+    oracle:
+      configuration:
+        cache-enabled: true
+        default-executor-type: SIMPLE
+        default-statement-timeout: 200000
+        lazy-loading-enabled: false
+        map-underscore-to-camel-case: true
+        multiple-result-sets-enabled: true
+        safe-row-bounds-enabled: false
+        use-column-label: true
+        useGeneratedKeys: true
+    postgresql:
+      configuration:
+        cache-enabled: true
+        default-executor-type: SIMPLE
+        default-statement-timeout: 200000
+        lazy-loading-enabled: false
+        map-underscore-to-camel-case: true
+        multiple-result-sets-enabled: true
+        safe-row-bounds-enabled: false
+        use-column-label: true
+        useGeneratedKeys: true
+spring:
+  datasource:
+    oracle:
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      hikari:
+        connection-timeout: 100000
+        maximum-pool-size: 10
+        minimum-idle: 5
+      jdbc-url: jdbc:log4jdbc:oracle:thin:@211.170.250.5:1526/ORA8
+      mapper-location: classpath*:com/s3s/**/*-oraclesql.xml
+      password: meone
+      type: com.zaxxer.hikari.HikariDataSource
+      username: meone
+    postgresql:
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      hikari:
+        connection-timeout: 100000
+        maximum-pool-size: 80
+        minimum-idle: 60
+      jdbc-url: jdbc:log4jdbc:postgresql://127.0.0.1:5432/eone
+      mapper-location: classpath*:com/s3s/**/*-postgresql.xml
+      password: '@s3s.com'
+      type: com.zaxxer.hikari.HikariDataSource
+      username: postgres

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.ordermanagerhistory.OrderManagerHistoryMapper">
+
+	<sql id="orderManagerHistorySelect">
+		SELECT
+			  req
+		FROM wmd_order_manager_history
+	</sql>
+
+
+	<sql id="orderManagerHistoryWhere">
+		
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.ordermanagerhistory.OrderManagerHistoryVO">
+		/* OrderManagerHistoryDTOMapper selectList */
+		<include refid="orderManagerHistorySelect" />
+		<include refid="orderManagerHistoryWhere" />
+		ORDER BY req_dt desc
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* OrderManagerHistoryDTOMapper selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="orderManagerHistorySelect" />
+			<include refid="orderManagerHistoryWhere" />
+		) AS pageTable
+	</select>
+	
+	
+	
+	<insert id="insert">
+		/* OrderManagerHistoryDTOMapper-postgresql insert */
+		INSERT INTO wmd_order_manager_history
+		(
+			  req
+			, reg_dt
+		)
+		VALUES
+		(
+			  #{req}
+			, #{regDt}::timestamp
+		)
+	</insert>
+	
+
+</mapper>

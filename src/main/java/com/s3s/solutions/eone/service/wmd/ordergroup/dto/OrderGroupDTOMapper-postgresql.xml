@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.ordergroup.OrderGroupMapper">
+
+	<sql id="orderGroupSelect">
+		SELECT
+			  order_group_id
+			, line_no
+			, order_group_type_cd
+			, order_group_date
+			, emergency_yn
+			, order_tray_qty
+			, work_tray_qty
+			, order_group_start_dt
+			, order_group_end_dt
+			, order_group_status_cd
+			, order_group_finish_type_cd
+		FROM wmd_order_group
+	</sql>
+
+
+	<sql id="orderGroupListWhere">
+		<where>
+			<if test=" param != null and param.orderGroupId != null and param.orderGroupId != '' ">
+				AND order_group_id = #{param.orderGroupId}
+			</if>
+			<if test=" param != null and param.lineNo != null and param.lineNo != '' ">
+				AND line_no = #{param.lineNo}
+			</if>
+			<if test=" param != null and param.orderGroupTypeCd != null and param.orderGroupTypeCd != '' ">
+				AND order_group_type_cd = #{param.orderGroupTypeCd}
+			</if>
+			<if test=" param != null and param.orderGroupDate != null and param.orderGroupDate != '' ">
+				AND order_group_date = #{param.orderGroupDate}
+			</if>
+			<if test=" param != null and param.emergencyYn != null and param.emergencyYn != '' ">
+				AND emergency_yn = #{param.emergencyYn}
+			</if>
+			<if test=" param != null and param.orderTrayQty != null ">
+				AND order_tray_qty = #{param.orderTrayQty}
+			</if>
+			<if test=" param != null and param.workTrayQty != null ">
+				AND work_tray_qty = #{param.workTrayQty}
+			</if>
+			<if test=" param != null and param.orderGroupStartDt != null and param.orderGroupStartDt != '' ">
+				AND order_group_start_dt = #{param.orderGroupStartDt}
+			</if>
+			<if test=" param != null and param.orderGroupEndDt != null and param.orderGroupEndDt != '' ">
+				AND order_group_end_dt = #{param.orderGroupEndDt}
+			</if>
+			<if test=" param != null and param.orderGroupStatusCd != null and param.orderGroupStatusCd != '' ">
+				AND order_group_status_cd = #{param.orderGroupStatusCd}
+			</if>
+			<if test=" param != null and param.orderGroupFinishTypeCd != null and param.orderGroupFinishTypeCd != '' ">
+				AND order_group_finish_type_cd = #{param.orderGroupFinishTypeCd}
+			</if>
+			<if test=" param != null and param.searchTrayId != null and param.searchTrayId != '' ">
+				AND order_group_id IN (
+					SELECT
+					distinct
+					order_group_id
+					FROM wmd_order_tray wot INNER JOIN wmd_order wo ON wot.order_id = wo.order_id
+					WHERE wot.tray_id LIKE '%${param.searchTrayId}%'
+				)
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.ordergroup.OrderGroupVO">
+		/* OrderGroupDTOMapper-postgresql selectList */
+		<include refid="orderGroupSelect" />
+		<include refid="orderGroupListWhere" />
+		ORDER BY order_group_id DESC
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* OrderGroupDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="orderGroupSelect" />
+			<include refid="orderGroupListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.ordergroup.OrderGroupVO">
+		/* OrderGroupDTOMapper-postgresql selectDetail */
+		<include refid="orderGroupSelect" />
+		WHERE order_group_id = #{orderGroupId}
+	</select>
+
+
+	<insert id="insert">
+		/* OrderGroupDTOMapper-postgresql insert */
+		INSERT INTO wmd_order_group
+		(
+			  order_group_id
+			, line_no
+			, order_group_type_cd
+			, order_group_date
+			, emergency_yn
+			, order_tray_qty
+			, work_tray_qty
+			, order_group_start_dt
+			, order_group_end_dt
+			, order_group_status_cd
+			, order_group_finish_type_cd
+		)
+		VALUES
+		(
+			  #{orderGroupId}
+			, #{lineNo}
+			, #{orderGroupTypeCd}
+			, #{orderGroupDate}
+			, #{emergencyYn}
+			, #{orderTrayQty}
+			, #{workTrayQty}
+			, #{orderGroupStartDt}::timestamp
+			, #{orderGroupEndDt}::timestamp
+			, #{orderGroupStatusCd}
+			, #{orderGroupFinishTypeCd}
+		)
+	</insert>
+
+
+	<update id="update">
+		/* OrderGroupDTOMapper-postgresql update */
+		UPDATE wmd_order_group
+		<set>
+			<if test=" orderGroupTypeCd != null and orderGroupTypeCd != '' ">
+				order_group_type_cd = #{orderGroupTypeCd} ,
+			</if>
+			<if test=" orderGroupDate != null and orderGroupDate != '' ">
+				order_group_date = #{orderGroupDate} ,
+			</if>
+			<if test=" orderGroupDate != null and orderGroupDate != '' ">
+				emergency_yn = #{emergencyYn} ,
+			</if>
+			<if test=" orderTrayQty != null ">
+				order_tray_qty = #{orderTrayQty} ,
+			</if>
+			<if test=" workTrayQty != null ">
+				work_tray_qty = #{workTrayQty} ,
+			</if>
+			<if test=" orderGroupStartDt != null and orderGroupStartDt != '' ">
+				order_group_start_dt = #{orderGroupStartDt}::timestamp ,
+			</if>
+			<if test=" orderGroupEndDt != null and orderGroupEndDt != '' ">
+				order_group_end_dt = #{orderGroupEndDt}::timestamp ,
+			</if>
+			<if test=" orderGroupStatusCd != null and orderGroupStatusCd != '' ">
+				order_group_status_cd = #{orderGroupStatusCd} ,
+			</if>
+			<if test=" orderGroupFinishTypeCd != null and orderGroupFinishTypeCd != '' ">
+				order_group_finish_type_cd = #{orderGroupFinishTypeCd} ,
+			</if>
+		</set>
+		WHERE order_group_id = #{orderGroupId}
+	</update>
+
+
+	<delete id="delete">
+		/* OrderGroupDTOMapper-postgresql delete */
+		DELETE FROM wmd_order_group
+		WHERE order_group_id = #{orderGroupId}
+	</delete>
+
+
+	<update id="merge">
+		/* OrderGroupDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{orderGroupId}::text AS order_group_id
+				, #{lineNo}::text AS line_no
+				, #{orderGroupTypeCd}::text AS order_group_type_cd
+				, #{orderGroupDate}::text AS order_group_date
+				, #{emergencyYn}::text AS emergency_yn
+				, #{orderTrayQty}::Integer AS order_tray_qty
+				, #{workTrayQty}::Integer AS work_tray_qty
+				, #{orderGroupStartDt}::text AS order_group_start_dt
+				, #{orderGroupEndDt}::text AS order_group_end_dt
+				, #{orderGroupStatusCd}::text AS order_group_status_cd
+				, #{orderGroupFinishTypeCd}::text AS order_group_finish_type_cd
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_order_group U
+			<set>
+				<if test=" orderGroupTypeCd != null and orderGroupTypeCd != '' ">
+					order_group_type_cd = #{orderGroupTypeCd} ,
+				</if>
+				<if test=" orderGroupDate != null and orderGroupDate != '' ">
+					order_group_date = #{orderGroupDate} ,
+				</if>
+				<if test=" emergencyYn != null and emergencyYn != '' ">
+					emergency_yn = #{emergencyYn} ,
+				</if>
+				<if test=" orderTrayQty != null ">
+					order_tray_qty = #{orderTrayQty} ,
+				</if>
+				<if test=" workTrayQty != null ">
+					work_tray_qty = #{workTrayQty} ,
+				</if>
+				<if test=" orderGroupStartDt != null and orderGroupStartDt != '' ">
+					order_group_start_dt = #{orderGroupStartDt}::timestamp ,
+				</if>
+				<if test=" orderGroupEndDt != null and orderGroupEndDt != '' ">
+					order_group_end_dt = #{orderGroupEndDt}::timestamp ,
+				</if>
+				<if test=" orderGroupStatusCd != null and orderGroupStatusCd != '' ">
+					order_group_status_cd = #{orderGroupStatusCd} ,
+				</if>
+				<if test=" orderGroupFinishTypeCd != null and orderGroupFinishTypeCd != '' ">
+					order_group_finish_type_cd = #{orderGroupFinishTypeCd} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.order_group_id = T.order_group_id
+		)
+		INSERT INTO wmd_order_group
+		(
+			  order_group_id
+			, line_no
+			, order_group_type_cd
+			, order_group_date
+			, emergency_yn
+			, order_tray_qty
+			, work_tray_qty
+			, order_group_start_dt
+			, order_group_end_dt
+			, order_group_status_cd
+			, order_group_finish_type_cd
+		)
+		SELECT
+			  T.order_group_id
+			, T.line_no
+			, T.order_group_type_cd
+			, T.order_group_date
+			, T.emergency_yn
+			, T.order_tray_qty
+			, T.work_tray_qty
+			, T.order_group_start_dt
+			, T.order_group_end_dt
+			, T.order_group_status_cd
+			, T.order_group_finish_type_cd
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			order_group_id
+		FROM wmd_order_group AS TMP
+		WHERE TMP.order_group_id = T.order_group_id
+		)
+	</update>
+
+
+</mapper>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.orderoperationhistory.OrderOperationHistoryMapper">
+
+	<sql id="select">
+		SELECT
+			  order_id
+			, order_group_id
+			, system_operation_mode_id
+			, system_operation_mode_step_id
+			, system_operation_mode_step_sort
+			, operation_start_dt
+			, operation_end_dt
+		FROM wmd_order_operation_history
+	</sql>
+
+	<sql id="where">
+		<where>
+			<if test=" param != null and param.orderId != null and param.orderId != '' ">
+				AND order_id = #{param.orderId}
+			</if>
+			<if test=" param != null and param.orderGroupId != null and param.orderGroupId != '' ">
+				AND order_group_id = #{param.orderGroupId}
+			</if>
+			<if test=" param != null and param.systemOperationModeId != null and param.systemOperationModeId != '' ">
+				AND system_operation_mode_id = #{param.systemOperationModeId}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepId != null and param.systemOperationModeStepId != '' ">
+				AND system_operation_mode_step_id = #{param.systemOperationModeStepId}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepSort != null ">
+				AND system_operation_mode_step_sort = #{param.systemOperationModeStepSort}
+			</if>
+			<if test=" param != null and param.operationStartDt != null and param.operationStartDt != '' ">
+				AND operation_start_dt = #{param.operationStartDt}
+			</if>
+			<if test=" param != null and param.operationEndDt != null and param.operationEndDt != '' ">
+				AND operation_end_dt = #{param.operationEndDt}
+			</if>
+			<if test=" param != null and param.schLineNo != null and param.schLineNo != '' ">
+				AND order_group_id IN (select order_group_id FROM wmd_order_group WHERE line_no = #{param.schLineNo})
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectOrderOperationHisList" resultType="com.s3s.solutions.eone.service.wmd.orderoperationhistory.OrderOperationHistoryVO">
+		/* OrderOperationHistoryDTOMapper-postgresql selectOrderOperationHisList */
+		<include refid="select" />
+		<include refid="where" />
+		ORDER BY order_id DESC, system_operation_mode_step_sort
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectOrderOperationHisListTotalRows" resultType="int">
+		/* OrderOperationHistoryDTOMapper-postgresql selectOrderOperationHisListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="select" />
+			<include refid="where" />
+		) AS pageTable
+	</select>
+
+	<select id="selectOrderOperationHistoryList" resultType="com.s3s.solutions.eone.service.wmd.orderoperationhistory.OrderOperationHistoryVO">
+		/* OrderOperationHistoryMapper-postgresql selectOrderOperationHistoryList */
+		SELECT
+			  wooh.order_id
+			, wooh.order_group_id
+			, wooh.system_operation_mode_id
+			, wooh.system_operation_mode_step_id
+			, wooh.system_operation_mode_step_sort
+			, wooh.operation_start_dt
+			, wooh.operation_end_dt
+			, wsoms.system_operation_mode_step_start_code
+			, wsoms.system_operation_mode_step_end_code
+		FROM wmd_order_operation_history wooh
+		INNER JOIN wmd_system_operation_mode_step wsoms
+			ON wooh.system_operation_mode_id = wsoms.system_operation_mode_id
+				AND wooh.system_operation_mode_step_id = wsoms.system_operation_mode_step_id
+		<where>
+			<if test=" param != null and param.orderId != null">
+				AND wooh.order_id = #{param.orderId}
+			</if>
+			<if test=" param != null and param.orderGroupId != null and param.orderGroupId != '' ">
+				AND wooh.order_group_id = #{param.orderGroupId}
+			</if>
+			<if test=" param != null and param.systemOperationModeId != null and param.systemOperationModeId != '' ">
+				AND wooh.system_operation_mode_id = #{param.systemOperationModeId}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepId != null and param.systemOperationModeStepId != '' ">
+				AND wooh.system_operation_mode_step_id = #{param.systemOperationModeStepId}
+			</if>
+			<if test=" param != null and param.systemOperationModeStepSort != null ">
+				AND wooh.system_operation_mode_step_sort = #{param.systemOperationModeStepSort}
+			</if>
+			<if test=" param != null and param.operationStartDt != null and param.operationStartDt != '' ">
+				AND wooh.operation_start_dt = #{param.operationStartDt}
+			</if>
+			<if test=" param != null and param.operationEndDt != null and param.operationEndDt != '' ">
+				AND wooh.operation_end_dt = #{param.operationEndDt}
+			</if>
+		</where>
+		ORDER BY system_operation_mode_step_sort
+	</select>
+	
+	
+	
+	<update id="updateOperationEndDt">
+		/* OrderOperationHistoryDTOMapper-postgresql updateOperationEndDt */
+		UPDATE wmd_order_operation_history
+		SET	operation_end_dt = #{operationEndDt}::timestamp
+		WHERE order_id = #{orderId}
+			AND system_operation_mode_id = #{systemOperationModeId}
+			AND system_operation_mode_step_id = #{systemOperationModeStepId}
+			AND operation_end_dt is null
+	</update>
+	
+	<select id="selectLastOperation" resultType="com.s3s.solutions.eone.service.wmd.orderoperationhistory.OrderOperationHistoryVO">
+		/* OrderOperationHistoryDTOMapper-postgresql selectLastOperation */
+		<include refid="select" />
+		<include refid="where" />
+		ORDER BY system_operation_mode_step_sort desc
+		LIMIT 1
+	</select>
+	
+</mapper>

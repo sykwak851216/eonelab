@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.machinestatushistory.MachineStatusHistoryMapper">
+
+	<sql id="machineStatusHistorySelect">
+		SELECT
+			  history_seq
+			, mc_id
+			, mc_status_cd
+			, del_yn
+			, reg_dt
+		FROM wmd_machine_status_history
+	</sql>
+
+
+	<sql id="machineStatusHistoryListWhere">
+		<where>
+			<if test=" param != null and param.historySeq != null and param.historySeq != '' ">
+				AND history_seq = #{param.historySeq}
+			</if>
+			<if test=" param != null and param.mcId != null and param.mcId != '' ">
+				AND mc_id = #{param.mcId}
+			</if>
+			<if test=" param != null and param.mcStatusCd != null and param.mcStatusCd != '' ">
+				AND mc_status_cd = #{param.mcStatusCd}
+			</if>
+			<if test=" param != null and param.delYn != null and param.delYn != '' ">
+				AND del_yn = #{param.delYn}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.machinestatushistory.MachineStatusHistoryVO">
+		/* MachineStatusHistoryDTOMapper-postgresql selectList */
+		<include refid="machineStatusHistorySelect" />
+		<include refid="machineStatusHistoryListWhere" />
+		ORDER BY history_seq
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* MachineStatusHistoryDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="machineStatusHistorySelect" />
+			<include refid="machineStatusHistoryListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.machinestatushistory.MachineStatusHistoryVO">
+		/* MachineStatusHistoryDTOMapper-postgresql selectDetail */
+		<include refid="machineStatusHistorySelect" />
+		WHERE history_seq = #{historySeq}
+	</select>
+
+
+	<insert id="insert">
+		/* MachineStatusHistoryDTOMapper-postgresql insert */
+		INSERT INTO wmd_machine_status_history
+		(
+			  history_seq
+			, mc_id
+			, mc_status_cd
+			, reg_dt
+		)
+		VALUES
+		(
+			  #{historySeq}
+			, #{mcId}
+			, #{mcStatusCd}
+			, #{regDt}::timestamp
+		)
+	</insert>
+
+
+	<update id="update">
+		/* MachineStatusHistoryDTOMapper-postgresql update */
+		UPDATE wmd_machine_status_history
+		<set>
+			<if test=" mcId != null and mcId != '' ">
+				mc_id = #{mcId} ,
+			</if>
+			<if test=" mcStatusCd != null and mcStatusCd != '' ">
+				mc_status_cd = #{mcStatusCd} ,
+			</if>
+			<if test=" delYn != null and delYn != '' ">
+				del_yn = #{delYn} ,
+			</if>
+		</set>
+		WHERE history_seq = #{historySeq}
+	</update>
+
+
+	<update id="delete">
+		/* MachineStatusHistoryDTOMapper-postgresql delete */
+		UPDATE wmd_machine_status_history
+		SET del_yn = 'Y'
+		WHERE history_seq = #{historySeq}
+	</update>
+
+
+	<update id="merge">
+		/* MachineStatusHistoryDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{historySeq}::text AS history_seq
+				, #{mcId}::text AS mc_id
+				, #{mcStatusCd}::text AS mc_status_cd
+				, #{regDt}::timestamp AS reg_dt
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_machine_status_history U
+			<set>
+				<if test=" mcId != null and mcId != '' ">
+					mc_id = #{mcId} ,
+				</if>
+				<if test=" mcStatusCd != null and mcStatusCd != '' ">
+					mc_status_cd = #{mcStatusCd} ,
+				</if>
+				<if test=" delYn != null and delYn != '' ">
+					del_yn = #{delYn} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.history_seq = T.history_seq
+		)
+		INSERT INTO wmd_machine_status_history
+		(
+			  history_seq
+			, mc_id
+			, mc_status_cd
+			, reg_dt
+		)
+		SELECT
+			  T.history_seq
+			, T.mc_id
+			, T.mc_status_cd
+			, T.reg_dt
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			history_seq
+		FROM wmd_machine_status_history AS TMP
+		WHERE TMP.history_seq = T.history_seq
+		)
+	</update>
+
+
+</mapper>

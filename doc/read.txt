@@ -1,0 +1,109 @@
+입고시 
+
+	getBufferTargetLocation 7 10013->10013
+	getBufferOperationMode  2 10011->10012
+
+셀버퍼 센싱 온 만들기 10015 시뮬레이터 기준
+	8개 일때 255
+	12개 일 4095
+	
+
+	
+	
+	
+	
+	-- 지시그룹
+DROP TABLE wmd_order_group;
+
+-- 지시그룹
+CREATE TABLE wmd_order_group (
+	order_group_id             VARCHAR(30) NOT NULL, -- 지시그룹ID
+	line_id                    VARCHAR(30) NOT NULL, -- 라인ID
+	order_group_type_cd        VARCHAR(30) NOT NULL, -- 지시그룹유형코드
+	order_group_date           VARCHAR(10) NOT NULL, -- 지시그룹일자
+	order_tray_qty             INTEGER     NOT NULL, -- 지시트레이수
+	work_tray_qty              INTEGER     NULL,     -- 처리트레이수
+	order_group_start_dt       TIMESTAMP   NULL,     -- 지시그룹시작일시
+	order_group_end_dt         TIMESTAMP   NULL,     -- 지시그룹완료일시
+	order_group_status_cd      VARCHAR(30) NOT NULL, -- 지시그룹상태코드
+	order_group_finish_type_cd VARCHAR(30) NULL      -- 지시그룹완료유형
+);
+
+-- 지시그룹 기본키
+CREATE UNIQUE INDEX PK_wmd_order_group
+	ON wmd_order_group ( -- 지시그룹
+		order_group_id ASC -- 지시그룹ID
+	);
+	
+	
+	
+	
+	
+	DROP TABLE wmd_order;
+
+-- 지시
+CREATE TABLE wmd_order (
+	order_id             VARCHAR(30) NOT NULL, -- 지시번호
+	order_group_id       VARCHAR(30) NULL,     -- 지시그룹ID
+	line_id              VARCHAR(30) NOT NULL, -- 라인ID
+	order_type_cd        VARCHAR(30) NOT NULL, -- 지시유형
+	order_date           VARCHAR(10) NOT NULL, -- 지시일자
+	order_tray_qty       INTEGER     NOT NULL, -- 지시트레이수
+	work_tray_qty        INTEGER     NULL,     -- 처리트레이수
+	order_start_dt       TIMESTAMP   NULL,     -- 지시시작일시
+	order_end_dt         TIMESTAMP   NULL,     -- 지시완료일시
+	order_status_cd      VARCHAR(30) NOT NULL, -- 지시상태
+	order_finish_type_cd VARCHAR(30) NULL      -- 지시완료유형
+);
+
+-- 지시 기본키
+CREATE UNIQUE INDEX PK_wmd_order
+	ON wmd_order ( -- 지시
+		order_id ASC -- 지시번호
+	);
+	
+	
+update sys_menu
+set menu_url = '/solutions/eone/pc/rack-current'
+where menu_id = 'A110';
+
+
+update sys_menu
+set menu_url = '/solutions/eone/pc/tray-current'
+where menu_id = 'A120';
+
+update sys_menu
+set menu_url = '/solutions/eone/pc/buffer-current'
+where menu_id = 'A130';
+
+update sys_menu
+set menu_url = '/solutions/eone/pc/order-list'
+where menu_id = 'A140';
+
+update sys_menu
+set menu_url = '/solutions/eone/pc/output-tray-list'
+where menu_id = 'B110';
+
+update sys_menu
+set menu_url = '/solutions/eone/pc/inquiry-tray-list'
+where menu_id = 'C110';
+
+insert into sys_menu(menu_id, p_menu_id, menu_name, menu_sort, menu_url, menu_group_cd, menu_site_code, menu_dialog_yn)
+values ('B120', 'B100', '수기등록', 2, '', 'MENU', 'EONE', 'N') 
+
+insert into sys_menu(menu_id, p_menu_id, menu_name, menu_sort, menu_url, menu_group_cd, menu_site_code, menu_dialog_yn)
+values ('C120', 'C100', '수기등록', 2, '', 'MENU', 'EONE', 'N') 
+
+insert into sys_menu(menu_id, p_menu_id, menu_name, menu_sort, menu_url, menu_group_cd, menu_site_code, menu_dialog_yn)
+values ('D120', 'D100', 'YUDO_WORK', 2, '', 'MENU', 'EONE', 'N') 
+
+
+
+update sys_menu
+set menu_name = 'YUDO_LIST'
+where menu_id = 'D110';
+	
+-------------------------------------------------------------------------------------------------
+sudo ln -s /usr/local/lib/libsvnjavahl-1.dylib /Library/Java/Extensions/libsvnjavahl-1.dylib
+
+	

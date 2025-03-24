@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationMapper">
+
+	<select id="selectRackInTrayList" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayLocationDTOMapper-postgresql selectRackInTrayList */
+		SELECT
+			  tray_location.tray_id
+			, tray_location.input_date
+			, tray_location.loc_type_cd
+			, tray_location.buffer_id
+			, tray_location.rack_cell_id
+			, rack_cell.rack_id
+			, tray_location.line_no
+			, rack_cell.rack_cell_x_axis
+			, rack_cell.rack_cell_y_axis
+			, tray_location.reg_dt
+			, tray_location.mod_dt
+			, rack.mc_id
+			, (now()::DATE - tray_location.input_date::DATE) AS storage_day
+		FROM wmd_tray_location tray_location
+		INNER JOIN wmd_rack_cell rack_cell on tray_location.rack_cell_id = rack_cell.rack_cell_id
+		INNER JOIN wmd_rack rack on rack_cell.rack_id = rack.rack_id
+		WHERE rack.del_yn = 'N'
+			AND rack_cell.del_yn = 'N'
+			AND tray_location.loc_type_cd IS NOT NULL <!-- 위치 유형이 등록안된 TRAY 제거 -->
+			AND tray_location.loc_type_cd = 'RACKCELL' <!--RACK에 있는 TRAY만 조회 -->
+		<if test=" param != null and param.trayId != null and param.trayId != '' ">
+			AND tray_location.tray_id LIKE CONCAT('%', #{param.trayId})
+		</if>
+		<if test=" param != null and param.lineNo != null and param.lineNo != '' ">
+			AND rack.line_no = #{param.lineNo}
+		</if>
+		<if test=" param != null and param.rackCellYAxis != null and param.rackCellYAxis != '' ">
+			AND rack_cell.rack_cell_y_axis = #{param.rackCellYAxis}
+		</if>
+		<if test=" param != null and param.expirationDay != null ">
+			<![CDATA[ AND (now()::DATE - tray_location.input_date::DATE) >= #{param.expirationDay} ]]>
+		</if>
+		<if test=' param != null and param.sort == "1" '>
+			ORDER BY tray_location.tray_id
+		</if>
+		<if test=' param != null and param.sort == "2" '>
+			ORDER BY tray_location.input_date
+		</if>
+		<if test=' param != null and param.sort == "3" '>
+			ORDER BY (now()::DATE - tray_location.input_date::DATE)
+		</if>
+	</select>
+
+	<select id="selectRackEmptyCellList" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayLocationDTOMapper-postgresql selectRackEmptyCellList */
+		SELECT
+			  rack.mc_id
+			, rack_cell.rack_id
+			, rack_cell.rack_cell_id
+			, rack_cell.rack_cell_x_axis
+			, rack_cell.rack_cell_y_axis
+		FROM wmd_rack_cell rack_cell
+		INNER JOIN wmd_rack rack ON rack_cell.rack_id = rack.rack_id
+		LEFT OUTER JOIN wmd_tray_location tray_location ON tray_location.rack_cell_id = rack_cell.rack_cell_id
+		WHERE rack.del_yn = 'N'
+		AND rack_cell.del_yn = 'N'
+		AND tray_location.rack_cell_id IS NULL
+		ORDER BY rack_cell.rack_id ASC
+	</select>
+	
+	<select id="selectRackEmptyCellListByLineNo" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayLocationDTOMapper-postgresql selectRackEmptyCellListByLineNo */
+		SELECT
+			  rack.mc_id
+			, rack.line_no
+			, rack_cell.rack_id
+			, rack_cell.rack_cell_id
+			, rack_cell.rack_cell_x_axis
+			, rack_cell.rack_cell_y_axis
+		FROM wmd_rack_cell rack_cell
+			INNER JOIN wmd_rack rack ON rack_cell.rack_id = rack.rack_id
+			LEFT OUTER JOIN wmd_tray_location tray_location ON tray_location.rack_cell_id = rack_cell.rack_cell_id
+		WHERE rack.del_yn = 'N'
+			AND rack_cell.del_yn = 'N'
+			AND tray_location.rack_cell_id IS NULL
+			AND rack.line_no = #{lineNo}
+		ORDER BY rack_cell.rack_cell_x_axis, rack_cell.rack_cell_y_axis, rack.rack_id
+	</select>
+	
+	<select id="selectGenerateRackEmptyCellListByLineNo" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayLocationDTOMapper-postgresql selectGenerateRackEmptyCellListByLineNo */
+		SELECT
+			  rack.mc_id
+			, rack.line_no
+			, rack.rack_name
+			, rack_cell.rack_id
+			, rack_cell.rack_cell_id
+			, rack_cell.rack_cell_x_axis
+			, rack_cell.rack_cell_y_axis
+		FROM wmd_rack_cell rack_cell
+			INNER JOIN wmd_rack rack ON rack_cell.rack_id = rack.rack_id
+			LEFT OUTER JOIN wmd_tray_location tray_location ON tray_location.rack_cell_id = rack_cell.rack_cell_id
+		WHERE rack.del_yn = 'N'
+			AND rack_cell.del_yn = 'N'
+			AND tray_location.rack_cell_id IS NULL
+			AND rack.line_no = #{lineNo}
+		ORDER BY rack_cell.rack_cell_x_axis, rack_cell.rack_cell_y_axis
+		LIMIT #{trayCount}
+	</select>
+
+	<sql id="trayLocationSelectMapper">
+		SELECT
+			  tl.tray_id
+			, tl.input_date
+			, tl.loc_type_cd
+			, tl.buffer_id
+			, tl.rack_cell_id
+			, tl.line_no
+			, tl.rack_id
+			, tl.rack_cell_x_axis
+			, tl.rack_cell_y_axis
+			, tl.reg_dt
+			, tl.mod_dt
+			, (now()::DATE - tl.input_date::DATE) AS storage_day
+			, wpt.order_type_cd
+			, wpt.tray_status_cd
+		FROM wmd_tray_location tl
+		LEFT OUTER JOIN (SELECT * FROM wmd_work_plan_tray WHERE tray_status_cd <![CDATA[ <> ]]> 'COMPLETE') wpt
+		ON wpt.tray_id = tl.tray_id
+	</sql>
+
+
+	<sql id="trayLocationListWhereMapper">
+		<where>
+			<if test=" param != null and param.trayId != null and param.trayId != '' ">
+				AND tl.tray_id LIKE '%${param.trayId}%'
+			</if>
+			<if test=" param != null and param.inputDate != null and param.inputDate != '' ">
+				AND tl.input_date = #{param.inputDate}
+			</if>
+			<if test=" param != null and param.locTypeCd != null and param.locTypeCd != '' ">
+				AND tl.loc_type_cd = #{param.locTypeCd}
+			</if>
+			<if test=" param != null and param.bufferId != null and param.bufferId != '' ">
+				AND tl.buffer_id = #{param.bufferId}
+			</if>
+			<if test=" param != null and param.rackCellId != null and param.rackCellId != '' ">
+				AND tl.rack_cell_id = #{param.rackCellId}
+			</if>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND tl.rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.rackCellXAxis != null ">
+				AND tl.rack_cell_x_axis = #{param.rackCellXAxis}
+			</if>
+			<if test=" param != null and param.rackCellYAxis != null ">
+				AND tl.rack_cell_y_axis = #{param.rackCellYAxis}
+			</if>
+			<if test=" param != null and param.expirationDay != null ">
+				<![CDATA[ AND (now()::DATE - tl.input_date::DATE) >= #{param.expirationDay} ]]>
+			</if>
+
+			<if test=" param != null and param.trayStatusCdList != null and param.trayStatusCdList.size != 0 ">
+				AND wpt.tray_status_cd IN
+				<foreach collection="param.trayStatusCdList" item="item" index="index" open="(" close=")" separator=",">#{item}</foreach>
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectTrayLocationPagingList" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayLocationMapper-postgresql selectTrayLocationPagingList */
+		<include refid="trayLocationSelectMapper" />
+		<include refid="trayLocationListWhereMapper" />
+		ORDER BY tl.mod_dt
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectTrayLocationListTotalRows" resultType="int">
+		/* TrayLocationMapper-postgresql selectTrayLocationListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="trayLocationSelectMapper" />
+			<include refid="trayLocationListWhereMapper" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectRackCellStoragedTrayList" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayLocationMapper-postgresql selectRackCellStoragedTrayList */
+		<include refid="trayLocationSelectMapper" />
+		WHERE tl.loc_type_cd = 'RACKCELL'
+		AND ( wpt.tray_status_cd not in ('ING') OR wpt.tray_status_cd IS NULL )
+		ORDER BY tl.tray_id
+	</select>
+	
+	<select id="selectTrayLocationListByOrderId" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayLocationDTOMapper-postgresql selectRackEmptyCellList */
+		SELECT
+			tl.line_no
+			, tl.tray_id
+			, tl.rack_id
+			, r.rack_name
+			, w.rack_cell_x_axis
+			, w.rack_cell_y_axis
+			, w.buffer_id
+			, w.inquiry_qty
+			, w.plan_no
+		FROM wmd_order AS o
+			INNER JOIN wmd_order_work AS w
+				ON o.order_id = w.order_id
+			INNER JOIN wmd_tray_location as tl
+				ON w.tray_id = tl.tray_id
+			INNER JOIN wmd_rack as r
+				ON w.rack_id = r.rack_id
+		WHERE o.order_id = #{param.orderId}
+			AND tl.line_no = #{param.lineNo}
+		ORDER BY w.buffer_id
+	</select>
+	
+	
+	<select id="selectTrayLocationByTrayIdLocType" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayLocationDTOMapper-postgresql selectTrayLocationBufferByOrderGroupId */
+		SELECT
+			tray_id
+			, input_date
+			, loc_type_cd
+			, buffer_id
+			, rack_cell_id
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+			, mod_dt
+			, (now()::DATE - input_date::DATE) AS storage_day
+		FROM wmd_tray_location
+		WHERE tray_id = #{param.trayId}
+			AND loc_type_cd = #{param.locTypeCd}
+	</select>
+	
+	<select id="selectRackInTrayCountPerLineNo" resultType="com.s3s.solutions.eone.service.wmd.traylocation.TrayLocationVO">
+		/* TrayLocationDTOMapper-postgresql selectRackInTrayCountPerLineNo */
+		SELECT
+			line.line_no
+			, tray.storeRackCount
+		FROM wmd_line AS LINE
+		LEFT JOIN (SELECT
+					tray_location.line_no
+					, count(tray_location.line_no) as storeRackCount
+				FROM wmd_tray_location tray_location
+				INNER JOIN wmd_rack_cell rack_cell on tray_location.rack_cell_id = rack_cell.rack_cell_id
+				INNER JOIN wmd_rack rack on rack_cell.rack_id = rack.rack_id
+				WHERE rack.del_yn = 'N'
+					AND rack_cell.del_yn = 'N'
+					AND tray_location.loc_type_cd IS NOT NULL
+					AND tray_location.loc_type_cd = 'RACKCELL'
+				GROUP BY tray_location.line_no) AS tray
+				ON line.line_no = tray.line_no
+		ORDER BY line.line_no
+	</select>
+
+</mapper>

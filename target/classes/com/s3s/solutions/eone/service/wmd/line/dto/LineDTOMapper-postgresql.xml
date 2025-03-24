@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.line.LineMapper">
+
+	<sql id="lineSelect">
+		SELECT
+			  line_no
+			, line_nm
+			, del_yn
+		FROM wmd_line
+	</sql>
+
+
+	<sql id="lineListWhere">
+		<where>
+			<if test=" param != null and param.lineNo != null and param.lineNo != '' ">
+				AND line_no = #{param.lineNo}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.line.LineVO">
+		/* LineDTOMapper selectList */
+		<include refid="lineSelect" />
+		<include refid="lineListWhere" />
+		ORDER BY mc_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* LineDTOMapper selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="lineSelect" />
+			<include refid="lineListWhere" />
+		) AS pageTable
+	</select>
+	
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.line.LineVO">
+		/* LineDTOMapper selectDetail */
+		<include refid="lineSelect" />
+		WHERE line_no = #{lineNo}
+	</select>
+	
+	
+
+</mapper>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.warehouse.WarehouseMapper">
+
+	<sql id="warehouseSelect">
+		SELECT
+			  warehouse_id
+			, warehouse_name
+			, del_yn
+			, reg_dt
+			, reg_id
+			, mod_dt
+			, mod_id
+		FROM wmd_warehouse
+	</sql>
+
+
+	<sql id="warehouseListWhere">
+		<where>
+			<if test=" param != null and param.warehouseId != null and param.warehouseId != '' ">
+				AND warehouse_id = #{param.warehouseId}
+			</if>
+			<if test=" param != null and param.warehouseName != null and param.warehouseName != '' ">
+				AND warehouse_name = #{param.warehouseName}
+			</if>
+			<if test=" param != null and param.delYn != null and param.delYn != '' ">
+				AND del_yn = #{param.delYn}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.warehouse.WarehouseVO">
+		/* WarehouseDTOMapper-postgresql selectList */
+		<include refid="warehouseSelect" />
+		<include refid="warehouseListWhere" />
+		ORDER BY warehouse_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* WarehouseDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="warehouseSelect" />
+			<include refid="warehouseListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.warehouse.WarehouseVO">
+		/* WarehouseDTOMapper-postgresql selectDetail */
+		<include refid="warehouseSelect" />
+		WHERE warehouse_id = #{warehouseId}
+	</select>
+
+
+	<insert id="insert">
+		/* WarehouseDTOMapper-postgresql insert */
+		INSERT INTO wmd_warehouse
+		(
+			  warehouse_id
+			, warehouse_name
+			, reg_dt
+			, reg_id
+		)
+		VALUES
+		(
+			  #{warehouseId}
+			, #{warehouseName}
+			, #{regDt}::timestamp
+			, #{regId}
+		)
+	</insert>
+
+
+	<update id="update">
+		/* WarehouseDTOMapper-postgresql update */
+		UPDATE wmd_warehouse
+		<set>
+			<if test=" warehouseName != null and warehouseName != '' ">
+				warehouse_name = #{warehouseName} ,
+			</if>
+			<if test=" delYn != null and delYn != '' ">
+				del_yn = #{delYn} ,
+			</if>
+			<if test=" modDt != null and modDt != '' ">
+				mod_dt = #{modDt}::timestamp ,
+			</if>
+			<if test=" modId != null and modId != '' ">
+				mod_id = #{modId} ,
+			</if>
+		</set>
+		WHERE warehouse_id = #{warehouseId}
+	</update>
+
+
+	<update id="delete">
+		/* WarehouseDTOMapper-postgresql delete */
+		UPDATE wmd_warehouse
+		SET del_yn = 'Y'
+			,mod_dt = #{modDt}::timestamp
+			,mod_id = #{modId}
+		WHERE warehouse_id = #{warehouseId}
+	</update>
+
+
+	<update id="merge">
+		/* WarehouseDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{warehouseId}::text AS warehouse_id
+				, #{warehouseName}::text AS warehouse_name
+				, #{regDt}::timestamp AS reg_dt
+				, #{regId}::text AS reg_id
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_warehouse U
+			<set>
+				<if test=" warehouseName != null and warehouseName != '' ">
+					warehouse_name = #{warehouseName} ,
+				</if>
+				<if test=" delYn != null and delYn != '' ">
+					del_yn = #{delYn} ,
+				</if>
+				<if test=" modDt != null and modDt != '' ">
+					mod_dt = #{modDt}::timestamp ,
+				</if>
+				<if test=" modId != null and modId != '' ">
+					mod_id = #{modId} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.warehouse_id = T.warehouse_id
+		)
+		INSERT INTO wmd_warehouse
+		(
+			  warehouse_id
+			, warehouse_name
+			, reg_dt
+			, reg_id
+		)
+		SELECT
+			  T.warehouse_id
+			, T.warehouse_name
+			, T.reg_dt
+			, T.reg_id
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			warehouse_id
+		FROM wmd_warehouse AS TMP
+		WHERE TMP.warehouse_id = T.warehouse_id
+		)
+	</update>
+
+
+</mapper>

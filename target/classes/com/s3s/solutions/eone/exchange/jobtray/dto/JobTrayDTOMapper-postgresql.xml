@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.exchange.jobtray.JobTrayMapper">
+
+	<sql id="jobTraySelect">
+		SELECT
+			  if_tray_id
+			, if_id
+			, tray_id
+			, in_out_type_cd
+			, ent_ymd
+			, emergency_yn
+			, seq
+		FROM wmd_interface_tray
+	</sql>
+
+
+	<sql id="jobTrayListWhere">
+		<where>
+			<if test=" param != null and param.ifTrayId != null and param.ifTrayId != '' ">
+				AND if_tray_id = #{param.ifTrayId}
+			</if>
+			<if test=" param != null and param.ifId != null and param.ifId != '' ">
+				AND if_id = #{param.ifId}
+			</if>
+			<if test=" param != null and param.trayId != null and param.trayId != '' ">
+				AND tray_id = #{param.trayId}
+			</if>
+			<if test=" param != null and param.inOutTypeCd != null and param.inOutTypeCd != '' ">
+				AND in_out_type_cd = #{param.inOutTypeCd}
+			</if>
+			<if test=" param != null and param.entYmd != null and param.entYmd != '' ">
+				AND ent_ymd = #{param.entYmd}
+			</if>
+			<if test=" param != null and param.emergencyYn != null and param.emergencyYn != '' ">
+				AND emergency_yn = #{param.emergencyYn}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.exchange.jobtray.JobTrayVO">
+		/* JobTrayDTOMapper-postgresql selectList */
+		<include refid="jobTraySelect" />
+		<include refid="jobTrayListWhere" />
+		ORDER BY if_tray_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* JobTrayDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="jobTraySelect" />
+			<include refid="jobTrayListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.exchange.jobtray.JobTrayVO">
+		/* JobTrayDTOMapper-postgresql selectDetail */
+		<include refid="jobTraySelect" />
+		WHERE if_tray_id = #{ifTrayId}
+	</select>
+
+
+	<insert id="insert">
+		/* JobTrayDTOMapper-postgresql insert */
+		INSERT INTO wmd_interface_tray
+		(
+			  if_tray_id
+			, if_id
+			, tray_id
+			, in_out_type_cd
+			, ent_ymd
+			, emergency_yn
+			, seq
+		)
+		VALUES
+		(
+			  #{ifTrayId}
+			, #{ifId}
+			, #{trayId}
+			, #{inOutTypeCd}
+			, #{entYmd}
+			, #{emergencyYn}
+			, #{seq}
+		)
+	</insert>
+
+
+	<update id="update">
+		/* JobTrayDTOMapper-postgresql update */
+		UPDATE wmd_interface_tray
+		<set>
+			<if test=" ifId != null and ifId != '' ">
+				if_id = #{ifId} ,
+			</if>
+			<if test=" trayId != null and trayId != '' ">
+				tray_id = #{trayId} ,
+			</if>
+			<if test=" inOutTypeCd != null and inOutTypeCd != '' ">
+				in_out_type_cd = #{inOutTypeCd} ,
+			</if>
+			<if test=" entYmd != null and entYmd != '' ">
+				ent_ymd = #{entYmd} ,
+			</if>
+			<if test=" emergencyYn != null and emergencyYn != '' ">
+				emergency_yn = #{emergencyYn} ,
+			</if>
+		</set>
+		WHERE if_tray_id = #{ifTrayId}
+	</update>
+
+
+	<update id="delete">
+		/* JobTrayDTOMapper-postgresql delete */
+		DELETE FROM wmd_interface_tray
+		WHERE if_tray_id = #{ifTrayId}
+	</update>
+
+
+	<update id="merge">
+		/* JobTrayDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{ifTrayId}::text AS if_tray_id
+				, #{ifId}::text AS if_id
+				, #{trayId}::text AS tray_id
+				, #{inOutTypeCd}::text AS in_out_type_cd
+				, #{entYmd}::text AS ent_ymd
+				, #{emergencyYn}::text AS emergency_yn
+				, #{seq}::text AS seq
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_interface_tray U
+			<set>
+				<if test=" ifId != null and ifId != '' ">
+					if_id = #{ifId} ,
+				</if>
+				<if test=" trayId != null and trayId != '' ">
+					tray_id = #{trayId} ,
+				</if>
+				<if test=" inOutTypeCd != null and inOutTypeCd != '' ">
+					in_out_type_cd = #{inOutTypeCd} ,
+				</if>
+				<if test=" entYmd != null and entYmd != '' ">
+					ent_ymd = #{entYmd} ,
+				</if>
+				<if test=" emergencyYn != null and emergencyYn != '' ">
+					emergency_yn = #{emergencyYn} ,
+				</if>
+				<if test=" seq != null and seq != '' ">
+					seq = #{seq} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.if_tray_id = T.if_tray_id
+		)
+		INSERT INTO wmd_interface_tray
+		(
+			  if_tray_id
+			, if_id
+			, tray_id
+			, in_out_type_cd
+			, ent_ymd
+			, emergency_yn
+			, seq
+		)
+		SELECT
+			  T.if_tray_id
+			, T.if_id
+			, T.tray_id
+			, T.in_out_type_cd
+			, T.ent_ymd
+			, T.emergency_yn
+			, T.seq
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			if_tray_id
+		FROM wmd_interface_tray AS TMP
+		WHERE TMP.if_tray_id = T.if_tray_id
+		)
+	</update>
+
+
+</mapper>

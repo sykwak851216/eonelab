@@ -1,0 +1,41 @@
+.sfp-message-box-list {z-index:99;display:flex;justify-content: center;flex-direction:column;position:absolute;top:0;left:0;right:0;bottom:0;height:100%;width:100%;}
+.sfp-message-box-list .sfp-message-box{width:80%;margin:0 auto;border-radius:3px;text-align:center;font-size:50px;line-height:80px;font-weight:700;color:#fff;background:rgba(142,142,142,0.9);-webkit-box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.5);-moz-box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.5);box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.5);}
+.sfp-message-box-list .sfp-message-box + .sfp-message-box{margin-top:40px}
+.sfp-message-box-list .sfp-message-box .sfp-message-box-header{border-radius:3px 3px 0 0;background:rgba(248,209,54,0.95);font-size:36px;line-height:50px;font-weight:500;}
+.sfp-message-box-list .sfp-message-box.alarm .sfp-message-box-header{background:rgba(242,91,91,0.95);}
+.sfp-message-box-list .sfp-message-box.error .sfp-message-box-header{background:rgba(242,91,91,0.95);}
+.sfp-message-box-list .sfp-message-box.info .sfp-message-box-header{background:rgba(12,183,56,0.95);}
+.sfp-message-box-list .sfp-message-box .sfp-message-box-body{padding:20px 0}
+
+
+.sfp-message-balloon {z-index:10;position:absolute; display:inline-block;left: 300px;animation: blinker 2.5s cubic-bezier(0, 0, 0.58, 1) infinite;}
+.sfp-message-balloon span {display:inline-block; padding:10px 20px; color:#fff; font-weight:700;font-size:24px; background:#f8d136; border-radius:20px;}
+.sfp-message-balloon.small span{font-size:18px}
+.sfp-message-balloon.big span{font-size:40px}
+.sfp-message-balloon:after {content:''; position:absolute; width:0; height:0; border-style:solid;}
+.sfp-message-balloon.up:after,
+.sfp-message-balloon.down:after {border-width:15px 10px; left:50%; margin-left:-10px;}
+.sfp-message-balloon.right:after,
+.sfp-message-balloon.left:after {border-width:10px 15px; top:50%; margin-top:-10px;}
+.sfp-message-balloon.up:after {border-color:#f8d136 transparent transparent transparent; bottom:-25px;}
+.sfp-message-balloon.down:after {border-color:transparent transparent #f8d136 transparent; top:-25px;}
+.sfp-message-balloon.right:after {border-color:transparent #f8d136 transparent transparent; left:-25px;}
+.sfp-message-balloon.left:after {border-color:transparent transparent transparent #f8d136; right:-25px;}
+
+.sfp-message-balloon.alarm span,.sfp-message-balloon.error span{background-color:#f25b5b}
+.sfp-message-balloon.up.alarm:after,.sfp-message-balloon.up.error:after {border-color:#f25b5b transparent transparent transparent}
+.sfp-message-balloon.down.alarm:after,.sfp-message-balloon.down.error:after {border-color:transparent transparent #f25b5b transparent}
+.sfp-message-balloon.right.alarm:after,.sfp-message-balloon.right.error:after {border-color:transparent #f25b5b transparent transparent}
+.sfp-message-balloon.left.alarm:after,.sfp-message-balloon.left.error:after {border-color:transparent transparent transparent #f25b5b}
+
+.sfp-message-balloon.info span{background-color:#0cb738}
+.sfp-message-balloon.up.info:after {border-color:#0cb738 transparent transparent transparent}
+.sfp-message-balloon.down.info:after {border-color:transparent transparent #0cb738 transparent}
+.sfp-message-balloon.right.info:after {border-color:transparent #0cb738 transparent transparent}
+.sfp-message-balloon.left.info:after {border-color:transparent transparent transparent #0cb738}
+
+@keyframes blinker {
+  50% {
+    opacity: 0.3;
+  }
+}

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.machine.MachineMapper">
+
+	<sql id="machineSelect">
+		SELECT
+			  mc_id
+			, mc_name
+			, del_yn
+			, reg_dt
+			, reg_id
+			, mod_dt
+			, mod_id
+		FROM wmd_machine
+	</sql>
+
+
+	<sql id="machineListWhere">
+		<where>
+			<if test=" param != null and param.mcId != null and param.mcId != '' ">
+				AND mc_id = #{param.mcId}
+			</if>
+			<if test=" param != null and param.mcName != null and param.mcName != '' ">
+				AND mc_name = #{param.mcName}
+			</if>
+			<if test=" param != null and param.delYn != null and param.delYn != '' ">
+				AND del_yn = #{param.delYn}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.machine.MachineVO">
+		/* MachineDTOMapper-postgresql selectList */
+		<include refid="machineSelect" />
+		<include refid="machineListWhere" />
+		ORDER BY mc_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* MachineDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="machineSelect" />
+			<include refid="machineListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.machine.MachineVO">
+		/* MachineDTOMapper-postgresql selectDetail */
+		<include refid="machineSelect" />
+		WHERE mc_id = #{mcId}
+	</select>
+
+
+	<insert id="insert">
+		/* MachineDTOMapper-postgresql insert */
+		INSERT INTO wmd_machine
+		(
+			  mc_id
+			, mc_name
+			, reg_dt
+			, reg_id
+		)
+		VALUES
+		(
+			  #{mcId}
+			, #{mcName}
+			, #{regDt}::timestamp
+			, #{regId}
+		)
+	</insert>
+
+
+	<update id="update">
+		/* MachineDTOMapper-postgresql update */
+		UPDATE wmd_machine
+		<set>
+			<if test=" mcName != null and mcName != '' ">
+				mc_name = #{mcName} ,
+			</if>
+			<if test=" delYn != null and delYn != '' ">
+				del_yn = #{delYn} ,
+			</if>
+			<if test=" modDt != null and modDt != '' ">
+				mod_dt = #{modDt}::timestamp ,
+			</if>
+			<if test=" modId != null and modId != '' ">
+				mod_id = #{modId} ,
+			</if>
+		</set>
+		WHERE mc_id = #{mcId}
+	</update>
+
+
+	<update id="delete">
+		/* MachineDTOMapper-postgresql delete */
+		UPDATE wmd_machine
+		SET del_yn = 'Y'
+			,mod_dt = #{modDt}::timestamp
+			,mod_id = #{modId}
+		WHERE mc_id = #{mcId}
+	</update>
+
+
+	<update id="merge">
+		/* MachineDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{mcId}::text AS mc_id
+				, #{mcName}::text AS mc_name
+				, #{regDt}::timestamp AS reg_dt
+				, #{regId}::text AS reg_id
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_machine U
+			<set>
+				<if test=" mcName != null and mcName != '' ">
+					mc_name = #{mcName} ,
+				</if>
+				<if test=" delYn != null and delYn != '' ">
+					del_yn = #{delYn} ,
+				</if>
+				<if test=" modDt != null and modDt != '' ">
+					mod_dt = #{modDt}::timestamp ,
+				</if>
+				<if test=" modId != null and modId != '' ">
+					mod_id = #{modId} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.mc_id = T.mc_id
+		)
+		INSERT INTO wmd_machine
+		(
+			  mc_id
+			, mc_name
+			, reg_dt
+			, reg_id
+		)
+		SELECT
+			  T.mc_id
+			, T.mc_name
+			, T.reg_dt
+			, T.reg_id
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			mc_id
+		FROM wmd_machine AS TMP
+		WHERE TMP.mc_id = T.mc_id
+		)
+	</update>
+
+
+</mapper>

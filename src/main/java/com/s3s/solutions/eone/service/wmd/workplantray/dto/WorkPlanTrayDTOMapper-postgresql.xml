@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.workplantray.WorkPlanTrayMapper">
+
+	<sql id="workPlanTraySelect">
+		SELECT
+			  plan_no
+			, plan_group_no
+			, tray_id
+			, order_kind_cd
+			, order_type_cd
+			, tray_order_sort
+			, emergency_yn
+			, input_date
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, excute_yn
+			, tray_status_cd
+			, cancel_yn
+			, reg_dt
+			, mod_dt
+			, if_work_tray_id
+			, ref_if_id
+			, (now()::DATE - input_date::DATE) AS storage_day
+		FROM wmd_work_plan_tray
+	</sql>
+
+
+	<sql id="workPlanTrayListWhere">
+		<where>
+			<if test=" param != null and param.planNo != null and param.planNo != '' ">
+				AND plan_no = #{param.planNo}
+			</if>
+			<if test=" param != null and param.planGroupNo != null and param.planGroupNo != '' ">
+				AND plan_group_no = #{param.planGroupNo}
+			</if>
+			<if test=" param != null and param.trayId != null and param.trayId != '' ">
+				AND tray_id LIKE '%${param.trayId}%'
+			</if>
+			<if test=" param != null and param.orderKindCd != null and param.orderKindCd != '' ">
+				AND order_kind_cd = #{param.orderKindCd}
+			</if>
+			<if test=" param != null and param.orderTypeCd != null and param.orderTypeCd != '' ">
+				AND order_type_cd = #{param.orderTypeCd}
+			</if>
+			<if test=" param != null and param.trayOrderSort != null and param.trayOrderSort != '' ">
+				AND tray_order_sort = #{param.trayOrderSort}
+			</if>
+			<if test=" param != null and param.emergencyYn != null and param.emergencyYn != '' ">
+				AND emergency_yn = #{param.emergencyYn}
+			</if>
+			<if test=" param != null and param.inputDate != null and param.inputDate != '' ">
+				AND input_date = #{param.inputDate}
+			</if>
+			<if test=" param != null and param.lineNo != null and param.lineNo != '' ">
+				AND line_no = #{param.lineNo}
+			</if>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.rackCellXAxis != null ">
+				AND rack_cell_x_axis = #{param.rackCellXAxis}
+			</if>
+			<if test=" param != null and param.rackCellYAxis != null ">
+				AND rack_cell_y_axis = #{param.rackCellYAxis}
+			</if>
+			<if test=" param != null and param.excuteYn != null and param.excuteYn != '' ">
+				AND excute_yn = #{param.excuteYn}
+			</if>
+			<if test=" param != null and param.trayStatusCd != null and param.trayStatusCd != '' ">
+				AND tray_status_cd = #{param.trayStatusCd}
+			</if>
+			<if test=" param != null and param.cancelYn != null and param.cancelYn != '' ">
+				AND cancel_yn = #{param.cancelYn}
+			</if>
+			<if test=" param != null and param.ifWorkTrayId != null and param.ifWorkTrayId != '' ">
+				AND if_work_tray_id = #{param.ifWorkTrayId}
+			</if>
+			<if test=" param != null and param.refIfId != null and param.refIfId != '' ">
+				AND ref_if_id = #{param.refIfId}
+			</if>
+			<if test=" param != null and param.searchStartDt != null and param.searchStartDt != '' and param.searchEndDt != null and param.searchEndDt != '' ">
+				AND reg_dt between to_timestamp(#{param.searchStartDt} , 'YYYY-MM-DD HH24:MI:SS') and to_timestamp(#{param.searchEndDt}, 'YYYY-MM-DD HH24:MI:SS')
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.workplantray.WorkPlanTrayVO">
+		/* WorkPlanTrayDTOMapper-postgresql selectList */
+		<include refid="workPlanTraySelect" />
+		<include refid="workPlanTrayListWhere" />
+		ORDER BY plan_no
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* WorkPlanTrayDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="workPlanTraySelect" />
+			<include refid="workPlanTrayListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.workplantray.WorkPlanTrayVO">
+		/* WorkPlanTrayDTOMapper-postgresql selectDetail */
+		<include refid="workPlanTraySelect" />
+		WHERE plan_no = #{planNo}
+	</select>
+
+
+	<insert id="insert">
+		/* WorkPlanTrayDTOMapper-postgresql insert */
+		INSERT INTO wmd_work_plan_tray
+		(
+			  plan_no
+			, plan_group_no
+			, tray_id
+			, order_kind_cd
+			, order_type_cd
+			, tray_order_sort
+			, emergency_yn
+			, input_date
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, excute_yn
+			, tray_status_cd
+			, cancel_yn
+			, reg_dt
+			, if_work_tray_id
+			, ref_if_id
+		)
+		VALUES
+		(
+			  #{planNo}
+			, #{planGroupNo}
+			, #{trayId}
+			, #{orderKindCd}
+			, #{orderTypeCd}
+			, #{trayOrderSort}
+			, #{emergencyYn}
+			, #{inputDate}
+			, #{lineNo}
+			, #{rackId}
+			, #{rackCellXAxis}
+			, #{rackCellYAxis}
+			, #{excuteYn}
+			, #{trayStatusCd}
+			, #{cancelYn}
+			, #{regDt}::timestamp
+			, #{ifWorkTrayId}
+			, #{refIfId}
+		)
+	</insert>
+
+
+	<update id="update">
+		/* WorkPlanTrayDTOMapper-postgresql update */
+		UPDATE wmd_work_plan_tray
+		<set>
+			<if test=" trayId != null and trayId != '' ">
+				tray_id = #{trayId} ,
+			</if>
+			<if test=" orderKindCd != null and orderKindCd != '' ">
+				order_kind_cd = #{orderKindCd} ,
+			</if>
+			<if test=" orderTypeCd != null and orderTypeCd != '' ">
+				order_type_cd = #{orderTypeCd} ,
+			</if>
+			<if test=" trayOrderSort != null and trayOrderSort != '' ">
+				tray_order_sort = #{trayOrderSort} ,
+			</if>
+			<if test=" emergencyYn != null and emergencyYn != '' ">
+				emergency_yn = #{emergencyYn} ,
+			</if>
+			<if test=" inputDate != null and inputDate != '' ">
+				input_date = #{inputDate} ,
+			</if>
+			<if test=" lineNo != null and lineNo != '' ">
+				line_no = #{lineNo} ,
+			</if>
+			<if test=" rackId != null and rackId != '' ">
+				rack_id = #{rackId} ,
+			</if>
+			<if test=" rackCellXAxis != null ">
+				rack_cell_x_axis = #{rackCellXAxis} ,
+			</if>
+			<if test=" rackCellYAxis != null ">
+				rack_cell_y_axis = #{rackCellYAxis} ,
+			</if>
+			<if test=" excuteYn != null and excuteYn != '' ">
+				excute_yn = #{excuteYn} ,
+			</if>
+			<if test=" trayStatusCd != null and trayStatusCd != '' ">
+				tray_status_cd = #{trayStatusCd} ,
+			</if>
+			<if test=" cancelYn != null and cancelYn != '' ">
+				cancel_yn = #{cancelYn} ,
+			</if>
+			<if test=" modDt != null and modDt != '' ">
+				mod_dt = #{modDt}::timestamp ,
+			</if>
+		</set>
+		WHERE plan_no = #{planNo}
+	</update>
+
+
+	<delete id="delete">
+		/* WorkPlanTrayDTOMapper-postgresql delete */
+		DELETE FROM wmd_work_plan_tray
+		WHERE plan_no = #{planNo}
+	</delete>
+
+
+	<update id="merge">
+		/* WorkPlanTrayDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{planNo}::text AS plan_no
+				, #{planGroupNo}::text AS plan_group_no
+				, #{trayId}::text AS tray_id
+				, #{orderKindCd}::text AS order_kind_cd
+				, #{orderTypeCd}::text AS order_type_cd
+				, #{trayOrderSort}::text AS tray_order_sort
+				, #{emergencyYn}::text AS emergency_yn
+				, #{inputDate}::text AS input_date
+				, #{rackId}::text AS rack_id
+				, #{lineNo}::text AS line_no
+				, #{rackCellXAxis}::Integer AS rack_cell_x_axis
+				, #{rackCellYAxis}::Integer AS rack_cell_y_axis
+				, #{excuteYn}::text AS excute_yn
+				, #{trayStatusCd}::text AS tray_status_cd
+				, #{cancelYn}::text AS cancel_yn
+				, #{regDt}::timestamp AS reg_dt
+				, #{ifWorkTrayId}::text AS if_work_tray_id
+				, #{refIfId}::text AS ref_if_id
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_work_plan_tray U
+			<set>
+				<if test=" trayId != null and trayId != '' ">
+					tray_id = #{trayId} ,
+				</if>
+				
+				<if test=" orderKindCd != null and orderKindCd != '' ">
+					order_kind_cd = #{orderKindCd} ,
+				</if>
+				<if test=" orderTypeCd != null and orderTypeCd != '' ">
+					order_type_cd = #{orderTypeCd} ,
+				</if>
+				<if test=" trayOrderSort != null and trayOrderSort != '' ">
+					tray_order_sort = #{trayOrderSort} ,
+				</if>
+				<if test=" emergencyYn != null and emergencyYn != '' ">
+					emergency_yn = #{emergencyYn} ,
+				</if>
+				<if test=" inputDate != null and inputDate != '' ">
+					input_date = #{inputDate} ,
+				</if>
+				<if test=" lineNo != null and lineNo != '' ">
+					line_no = #{lineNo} ,
+				</if>
+				<if test=" rackId != null and rackId != '' ">
+					rack_id = #{rackId} ,
+				</if>
+				<if test=" rackCellXAxis != null ">
+					rack_cell_x_axis = #{rackCellXAxis} ,
+				</if>
+				<if test=" rackCellYAxis != null ">
+					rack_cell_y_axis = #{rackCellYAxis} ,
+				</if>
+				<if test=" excuteYn != null and excuteYn != '' ">
+					excute_yn = #{excuteYn} ,
+				</if>
+				<if test=" trayStatusCd != null and trayStatusCd != '' ">
+					tray_status_cd = #{trayStatusCd} ,
+				</if>
+				<if test=" cancelYn != null and cancelYn != '' ">
+					cancel_yn = #{cancelYn} ,
+				</if>
+				<if test=" modDt != null and modDt != '' ">
+					mod_dt = #{modDt}::timestamp ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.plan_no = T.plan_no
+		)
+		INSERT INTO wmd_work_plan_tray
+		(
+			  plan_no
+			, plan_group_no
+			, tray_id
+			, order_kind_cd
+			, order_type_cd
+			, tray_order_sort
+			, emergency_yn
+			, input_date
+			, line_no
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, excute_yn
+			, tray_status_cd
+			, cancel_yn
+			, reg_dt
+			, if_work_tray_id
+			, ref_if_id
+		)
+		SELECT
+			  T.plan_no
+			, T.plan_group_no
+			, T.tray_id
+			, T.order_kind_cd
+			, T.order_type_cd
+			, T.tray_order_sort
+			, T.emergency_yn
+			, T.input_date
+			, T.line_no
+			, T.rack_id
+			, T.rack_cell_x_axis
+			, T.rack_cell_y_axis
+			, T.excute_yn
+			, T.tray_status_cd
+			, T.cancel_yn
+			, T.reg_dt
+			, T.if_work_tray_id
+			, T.ref_if_id
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			plan_no
+		FROM wmd_work_plan_tray AS TMP
+		WHERE TMP.plan_no = T.plan_no
+		)
+	</update>
+
+
+</mapper>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.s3s.solutions.eone.service.wmd.rackcell.RackCellMapper">
+
+	<sql id="rackCellSelect">
+		SELECT
+			  rack_cell_id
+			, rack_cell_name
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, del_yn
+			, reg_dt
+			, reg_id
+			, mod_dt
+			, mod_id
+		FROM wmd_rack_cell
+	</sql>
+
+
+	<sql id="rackCellListWhere">
+		<where>
+			<if test=" param != null and param.rackCellId != null and param.rackCellId != '' ">
+				AND rack_cell_id = #{param.rackCellId}
+			</if>
+			<if test=" param != null and param.rackCellName != null and param.rackCellName != '' ">
+				AND rack_cell_name = #{param.rackCellName}
+			</if>
+			<if test=" param != null and param.rackId != null and param.rackId != '' ">
+				AND rack_id = #{param.rackId}
+			</if>
+			<if test=" param != null and param.rackCellXAxis != null ">
+				AND rack_cell_x_axis = #{param.rackCellXAxis}
+			</if>
+			<if test=" param != null and param.rackCellYAxis != null ">
+				AND rack_cell_y_axis = #{param.rackCellYAxis}
+			</if>
+			<if test=" param != null and param.delYn != null and param.delYn != '' ">
+				AND del_yn = #{param.delYn}
+			</if>
+		</where>
+	</sql>
+
+
+	<select id="selectList" resultType="com.s3s.solutions.eone.service.wmd.rackcell.RackCellVO">
+		/* RackCellDTOMapper-postgresql selectList */
+		<include refid="rackCellSelect" />
+		<include refid="rackCellListWhere" />
+		ORDER BY rack_cell_id
+		<if test=" paging != null ">
+			OFFSET #{paging.number} * #{paging.size} LIMIT #{paging.size}
+		</if>
+	</select>
+
+
+	<select id="selectListTotalRows" resultType="int">
+		/* RackCellDTOMapper-postgresql selectListTotalRows */
+		SELECT
+			COUNT(*) AS totalRows
+		FROM (
+			<include refid="rackCellSelect" />
+			<include refid="rackCellListWhere" />
+		) AS pageTable
+	</select>
+
+
+	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.rackcell.RackCellVO">
+		/* RackCellDTOMapper-postgresql selectDetail */
+		<include refid="rackCellSelect" />
+		WHERE rack_cell_id = #{rackCellId}
+	</select>
+
+
+	<insert id="insert">
+		/* RackCellDTOMapper-postgresql insert */
+		INSERT INTO wmd_rack_cell
+		(
+			  rack_cell_id
+			, rack_cell_name
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+			, reg_id
+		)
+		VALUES
+		(
+			  #{rackCellId}
+			, #{rackCellName}
+			, #{rackId}
+			, #{rackCellXAxis}
+			, #{rackCellYAxis}
+			, #{regDt}::timestamp
+			, #{regId}
+		)
+	</insert>
+
+
+	<update id="update">
+		/* RackCellDTOMapper-postgresql update */
+		UPDATE wmd_rack_cell
+		<set>
+			<if test=" rackCellName != null and rackCellName != '' ">
+				rack_cell_name = #{rackCellName} ,
+			</if>
+			<if test=" rackId != null and rackId != '' ">
+				rack_id = #{rackId} ,
+			</if>
+			<if test=" rackCellXAxis != null ">
+				rack_cell_x_axis = #{rackCellXAxis} ,
+			</if>
+			<if test=" rackCellYAxis != null ">
+				rack_cell_y_axis = #{rackCellYAxis} ,
+			</if>
+			<if test=" delYn != null and delYn != '' ">
+				del_yn = #{delYn} ,
+			</if>
+			<if test=" modDt != null and modDt != '' ">
+				mod_dt = #{modDt}::timestamp ,
+			</if>
+			<if test=" modId != null and modId != '' ">
+				mod_id = #{modId} ,
+			</if>
+		</set>
+		WHERE rack_cell_id = #{rackCellId}
+	</update>
+
+
+	<update id="delete">
+		/* RackCellDTOMapper-postgresql delete */
+		UPDATE wmd_rack_cell
+		SET del_yn = 'Y'
+			,mod_dt = #{modDt}::timestamp
+			,mod_id = #{modId}
+		WHERE rack_cell_id = #{rackCellId}
+	</update>
+
+
+	<update id="merge">
+		/* RackCellDTOMapper-postgresql merge */
+		WITH T AS
+		(
+			SELECT
+				  #{rackCellId}::text AS rack_cell_id
+				, #{rackCellName}::text AS rack_cell_name
+				, #{rackId}::text AS rack_id
+				, #{rackCellXAxis}::Integer AS rack_cell_x_axis
+				, #{rackCellYAxis}::Integer AS rack_cell_y_axis
+				, #{regDt}::timestamp AS reg_dt
+				, #{regId}::text AS reg_id
+		),
+		UPDATE_OPTION AS
+		(
+			UPDATE wmd_rack_cell U
+			<set>
+				<if test=" rackCellName != null and rackCellName != '' ">
+					rack_cell_name = #{rackCellName} ,
+				</if>
+				<if test=" rackId != null and rackId != '' ">
+					rack_id = #{rackId} ,
+				</if>
+				<if test=" rackCellXAxis != null ">
+					rack_cell_x_axis = #{rackCellXAxis} ,
+				</if>
+				<if test=" rackCellYAxis != null ">
+					rack_cell_y_axis = #{rackCellYAxis} ,
+				</if>
+				<if test=" delYn != null and delYn != '' ">
+					del_yn = #{delYn} ,
+				</if>
+				<if test=" modDt != null and modDt != '' ">
+					mod_dt = #{modDt}::timestamp ,
+				</if>
+				<if test=" modId != null and modId != '' ">
+					mod_id = #{modId} ,
+				</if>
+			</set>
+			FROM T
+			WHERE
+				U.rack_cell_id = T.rack_cell_id
+		)
+		INSERT INTO wmd_rack_cell
+		(
+			  rack_cell_id
+			, rack_cell_name
+			, rack_id
+			, rack_cell_x_axis
+			, rack_cell_y_axis
+			, reg_dt
+			, reg_id
+		)
+		SELECT
+			  T.rack_cell_id
+			, T.rack_cell_name
+			, T.rack_id
+			, T.rack_cell_x_axis
+			, T.rack_cell_y_axis
+			, T.reg_dt
+			, T.reg_id
+		FROM T
+		WHERE NOT EXISTS
+		(
+		SELECT
+			rack_cell_id
+		FROM wmd_rack_cell AS TMP
+		WHERE TMP.rack_cell_id = T.rack_cell_id
+		)
+	</update>
+
+
+</mapper>
