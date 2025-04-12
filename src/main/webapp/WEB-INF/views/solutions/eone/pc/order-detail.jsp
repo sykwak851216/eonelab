@@ -1,11 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.studio3s.co.kr/tags" prefix="s" %>
+<%@ page import="com.s3s.solutions.eone.define.ELocType" %>
+<script src="<c:url value='/resources/js/sfp/sfp-ui-messagebox.js' />"></script>
+<link rel="stylesheet" href="<c:url value='/resources/css/sfp/sfp-ui-messagebox.css' />">
 <script>
 $(function(){
-
-	var params = Dialog.getParams();
 	window.OrderDetail = (function($){
+		var params = Dialog.getParams();
+		
 		var init = function(){
 			$(".contents-wrap").setData(Dialog.getParams());
 			$("#tray-info-grid").grid({
@@ -29,7 +32,14 @@ $(function(){
 // 					]
 // 				]
 // 				, height : "400px"
-// 			});
+// 			});\
+			
+			// '진행' 상태가 아니면 완료버튼 숨김 (2025.04.05 - by MOON.)
+			if(params.orderGroupStatusNameCache != "진행"){
+				$('#btn_complete').css('display', 'none');
+			}else{
+				$('#btn_complete').css('display', 'display');				
+			}
 			_setForm();
 			_bindEvent();
 			getOrderWorkList();
@@ -39,6 +49,35 @@ $(function(){
 			$(".btn-close").on("touchend click", function(e){
 				Dialog.close();
 			});
+			
+			$(".btn-add").on("touchend click", function(e){
+				// 완료처리 
+				e.preventDefault();
+				_completeOrder();
+			});
+		}
+		// 작업지시 완료 처리 함수 (2025.04.10 - by MOON.)
+		, _completeOrder = function(){
+			var param = { orderGroupId : params.orderGroupId }
+			//alert(param.orderGroupId);
+			const _pwd = prompt("해당 작업을 완료하시기 위해서 비밀번호를 입력하십시요.");
+			if(_pwd == null || _pwd == undefined) { return; } // 취소버튼 클릭
+			if(_pwd == "") {alert("비밀번호를 입력하지 않았습니다."); return;} // 비번 입력없이 확인버튼 클릭
+			
+			if(_pwd != "1234"){
+				alert("비밀번호가 틀립니다.");
+				return;
+			}
+			
+			SfpAjax.ajax("<c:url value='/solutions/eone/wmd/ordergroup/forceCompleteOrderGroup'/>", param, function(data) {
+					//if(data === true){
+					//	alert("true");						
+					//}else if(data === false){
+					//	alert("false");
+					//}
+					alert("작업을 완료하였습니다.");
+					Dialog.close(true);
+			});				
 		}
 		, _setForm = function(){
 
@@ -124,9 +163,10 @@ $(function(){
 <!-- 			</div> -->
 		</section>
 		<footer>
-			<div class="align-center">
+			<div class="align-center">				
 				<button class="btn-close"><s:interpret word='닫기' abbr='' /></button>
-			</div>
+				<button class="btn-add" id="btn_complete"><s:interpret word='완료' abbr='' /></button>
+			</div>						
 		</footer>
 	</div>
 </main>

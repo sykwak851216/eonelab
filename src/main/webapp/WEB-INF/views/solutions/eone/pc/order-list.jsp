@@ -36,8 +36,8 @@ $(function(){
 			});
 			$("#order-list-grid").on("touchend click", "tr", function(e) {
 				e.preventDefault();
-				Dialog.open("<c:url value='/solutions/eone/pc/order-detail.dialog' />", { width: "1800px", height: "900px" }, $("#order-list-grid").grid("getData", this), function(){
-
+				Dialog.open("<c:url value='/solutions/eone/pc/order-detail.dialog' />", { width: "1800px", height: "900px" }, $("#order-list-grid").grid("getData", this), function(){					
+					list();
 				});
 				$(this).blur();
 			});
@@ -107,6 +107,10 @@ $(function(){
 					<span>
 						<label class="label-text"><s:interpret word='Rack번호' abbr='' /></label>
 						<input type="text" name="searchTrayId" id="searchTrayId" placeholder="<s:interpret word='Rack번호' abbr='' />">
+					</span>
+					<span>
+						<label class="label-text"><s:interpret word='지시번호' abbr='' /></label>
+						<input type="text" name="orderGroupId" id="orderGroupId" placeholder="<s:interpret word='지시번호' abbr='' />">
 					</span>
 					<button class="btn-srch ico"><s:interpret word='조회' abbr='' /></button>
 					<button class="btn-reset image"><s:interpret word='초기화' abbr='' /></button>
