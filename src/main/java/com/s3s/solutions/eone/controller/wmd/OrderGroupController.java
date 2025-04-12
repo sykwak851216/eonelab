@@ -12,6 +12,7 @@ import com.s3s.sfp.security.Authority;
 import com.s3s.sfp.service.common.PagingDTO;
 import com.s3s.sfp.service.common.PagingListDTO;
 import com.s3s.solutions.eone.biz.OrderGroupBizService;
+import com.s3s.solutions.eone.service.wmd.order.OrderVO;
 import com.s3s.solutions.eone.service.wmd.ordergroup.OrderGroupService;
 import com.s3s.solutions.eone.service.wmd.ordergroup.OrderGroupVO;
 import com.s3s.solutions.eone.service.wmd.ordergroup.dto.OrderGroupDTO;
@@ -29,6 +30,11 @@ public class OrderGroupController {
 
 	private final OrderGroupBizService orderGroupBizService;
 
+	@RequestMapping(value = { "/forceCompleteOrderGroup" }, method = { RequestMethod.POST, RequestMethod.GET })
+	public boolean forceCompleteOrderGroup(OrderVO orderVO) throws Exception {		
+		return orderGroupBizService.forceCompleteOrderGroup(orderVO);
+	}
+	
 	@RequestMapping(value = { "/getPagingList" }, method = { RequestMethod.POST, RequestMethod.GET })
 	public PagingListDTO<OrderGroupVO> getPagingList(OrderGroupVO vo, PagingDTO page) throws Exception {
 		return orderGroupService.getPagingList(vo, page);
