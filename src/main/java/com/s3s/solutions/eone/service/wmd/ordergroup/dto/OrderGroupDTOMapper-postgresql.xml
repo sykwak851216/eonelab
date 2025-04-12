@@ -23,7 +23,7 @@
 	<sql id="orderGroupListWhere">
 		<where>
 			<if test=" param != null and param.orderGroupId != null and param.orderGroupId != '' ">
-				AND order_group_id = #{param.orderGroupId}
+				AND ( order_group_id = #{param.orderGroupId} OR order_group_id LIKE  '%' || #{param.orderGroupId} || '%' )
 			</if>
 			<if test=" param != null and param.lineNo != null and param.lineNo != '' ">
 				AND line_no = #{param.lineNo}
