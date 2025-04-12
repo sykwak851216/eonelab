@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.s3s.solutions.eone.service.wmd.ordertray.OrderTrayService;
+import com.s3s.solutions.eone.service.wmd.ordertray.OrderTrayVO;
 import com.s3s.solutions.eone.service.wmd.ordertray.dto.OrderTrayDTO;
 import com.s3s.sfp.security.Authority;
 import com.s3s.sfp.service.common.PagingDTO;
@@ -56,6 +58,16 @@ public class OrderTrayController {
 	@RequestMapping(value = "/deleteList", method = { RequestMethod.GET, RequestMethod.POST })
 	public void deleteList(@RequestBody List<OrderTrayDTO> list) throws Exception {
 		orderTrayService.deleteList(list);
+	}
+	
+	/**
+	 * new Tray 중복 체크
+	 * @param list
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dulipCheck", method = { RequestMethod.GET, RequestMethod.POST })
+	public void duplicateTrayId(@RequestParam(value="trayId",defaultValue = "") String trayId) throws Exception {
+		orderTrayService.duplicateTrayId(trayId);
 	}
 
 }

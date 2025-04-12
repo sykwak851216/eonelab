@@ -37,7 +37,6 @@ public class PcController {
 	
 	private final WorkJobTrayService workJobTrayService;
 	
-	
 	private final OrderManager orderManager;
 	
 	@RequestMapping(value = { "/test" }, method = { RequestMethod.POST, RequestMethod.GET })

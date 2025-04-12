@@ -17,15 +17,19 @@ import com.s3s.solutions.eone.EoneConst;
 import com.s3s.solutions.eone.biz.OrderBizService;
 import com.s3s.solutions.eone.biz.OrderOperationHistoryBizService;
 import com.s3s.solutions.eone.biz.OrderWorkBizService;
+import com.s3s.solutions.eone.biz.TrayLocationBizService;
 import com.s3s.solutions.eone.define.EOrderStatus;
 import com.s3s.solutions.eone.define.EWorkStatus;
 import com.s3s.solutions.eone.dmw.command.message.body.BufferReportBody;
 import com.s3s.solutions.eone.dmw.command.message.body.GantryReportBody;
+import com.s3s.solutions.eone.dmw.command.message.body.InHounseTrayBody;
 import com.s3s.solutions.eone.dmw.command.message.body.OrderReportBody;
 import com.s3s.solutions.eone.manager.PLCManager;
 import com.s3s.solutions.eone.service.wmd.order.OrderVO;
 import com.s3s.solutions.eone.service.wmd.orderwork.OrderWorkService;
 import com.s3s.solutions.eone.service.wmd.orderwork.OrderWorkVO;
+import com.s3s.solutions.eone.service.wmd.trayduplicatelocation.TrayDuplicateLocationService;
+import com.s3s.solutions.eone.service.wmd.trayduplicatelocation.TrayDuplicateLocationVO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +54,9 @@ public class PLCCommand {
 
 	private final PLCManager plcManager;
 	
+	private final TrayLocationBizService trayLocationBizService;
+	
+	private final TrayDuplicateLocationService trayDuplicateLocationService;
 	
 	@MessageListener("buffer")
 	public void getBufferReport(@MessageParam(EParamType.SYSTEM_ID) String systemId, @MessageParam(EParamType.MESSAGE) BufferReportBody newBuffer) {
@@ -134,7 +141,7 @@ public class PLCCommand {
 		log.info("GantryReportBody - " + vo.toString());
 		setGantry(systemId, vo);
 	}
-
+	
 	@MessageListener("order")
 	public void getOrderReport(@MessageParam(EParamType.SYSTEM_ID) String systemId, @MessageParam(EParamType.MESSAGE) OrderReportBody changeOrder) {
 		log.info("OrderReportBody - " + changeOrder.toString());

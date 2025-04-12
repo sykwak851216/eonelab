@@ -385,6 +385,8 @@ public class OrderBizService {
 	public OrderVO getOrderById(String orderId) throws Exception{
 		return orderService.getOrderById(orderId);
 	}
+	
+	
 
 	/**
 	 * 지시 시작

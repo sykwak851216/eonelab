@@ -113,6 +113,21 @@ public class PLCManager {
 		});
 
 	}
+	
+	/*
+	 * TrayId 중복 체크 후 결과를 알람 Status WRITE 영역에 처리 
+	 */
+	public void sendAlarmState(String alarmState) throws Exception {
+		dmwManager.getHadler(EoneConst.PLC_ID, ModbusTCPHandler.class).ifPresent(o -> {
+			try {
+				o.send(CMD_WAIT_ORDER, WAIT_ORDER_ADDR, 0);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+	}
+	
 
 	//FIXME 렉번호 좌우로 변경해야함
 	private void makeWorkData(List<OrderWorkVO> workList, OrderRequestBody sendOrder) {

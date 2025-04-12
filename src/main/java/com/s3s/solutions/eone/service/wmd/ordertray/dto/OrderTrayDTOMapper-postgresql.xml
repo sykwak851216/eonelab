@@ -65,7 +65,13 @@
 		) AS pageTable
 	</select>
 
-
+	<select id="selectTrayduplicationResult" resultType="int">
+		/* RackCellMapper-postgresql selectRackCellListByGantry */
+		select COUNT(*)
+		  from wmd_tray_location
+		 where tray_id = #{trayId}
+	</select>
+	
 	<select id="selectDetail" resultType="com.s3s.solutions.eone.service.wmd.ordertray.OrderTrayVO">
 		/* OrderTrayDTOMapper-postgresql selectDetail */
 		<include refid="orderTraySelect" />

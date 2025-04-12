@@ -72,7 +72,19 @@ $(function(){
 			$("#buffer-current-template li").each(function(e){
 				var $this = $(this);
 				var bufferId = $this.data("bufferId");
-				//var trayId = $this.find("input[name='trayId']").val();
+				var trayId   = $this.find("input[name='trayId']").val();
+				
+				console.log("Duplicate :"lineNo);
+				console.log("Duplicate :"bufferId);
+				console.log("Duplicate :"trayId);
+				//Tray 중복 체크
+				SfpAjax.ajaxRequestBody("<c:url value='/solutions/eone/wmd/ordertray/dulipCheck'/>", {trayId : trayId}, function(data) {
+					if(data !== 0){
+						MessageBox.alarm("Tray["+trayId+"]가 이미 입고되어 있습니다. \n중복 Tray를 확인하세요", { isAutoHide : true });
+						return;
+						//PLC 경광등 인터페이스 로직 추가.
+					}
+				});
 
 				if(_checkSensing($this)){
 					orderTrayList.push({

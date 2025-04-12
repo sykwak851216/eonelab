@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>com.s3s.sfp</groupId>
 		<artifactId>sfp-starter-parent</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 		<relativePath />
 	</parent>
 
@@ -25,30 +25,10 @@
 			<artifactId>javax.servlet.jsp-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<dependency>
-			<groupId>com.s3s.sfp</groupId>
-			<artifactId>sfp-core</artifactId>
-			<version>3.2.20</version>
-<!-- 			<version>3.1.30</version> -->
-		</dependency>
 
 		<dependency>
 			<groupId>com.s3s.sfp</groupId>
 			<artifactId>sfp-web-core</artifactId>
-			<version>2.1.5</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.s3s.sfp</groupId>
-					<artifactId>sfp-core</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -100,18 +80,6 @@
 					<warSourceDirectory>src/main/webapp</warSourceDirectory>
 				</configuration>
 			</plugin>
-			<plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
 		</plugins>
 	</build>
 

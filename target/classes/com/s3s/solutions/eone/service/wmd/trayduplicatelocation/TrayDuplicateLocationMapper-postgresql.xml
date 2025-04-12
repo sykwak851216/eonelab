@@ -3,6 +3,11 @@
 
 <mapper namespace="com.s3s.solutions.eone.service.wmd.trayduplicatelocation.TrayDuplicateLocationMapper">
 
-	
+	<select id="selectTrayduplicationResult" resultType="com.s3s.solutions.eone.service.wmd.trayduplicatelocation.TrayDuplicateLocationVO">
+		/* RackCellMapper-postgresql selectRackCellListByGantry */
+		select COUNT(*)
+		  from wmd_tray_location
+		 where tray_id = #{trayId}
+	</select>
 
 </mapper>
