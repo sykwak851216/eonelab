@@ -86,8 +86,9 @@ public class OrderGroupBizService {
 		 *  5-2. 해당 작업지시에 연결된 검체관 Rack(Tray Id)들을 하나씩 찾아 해달 테이블(아래기술)의 상태(아래참고)를 완료 처리함.
 		 *  	- wmd_work_plan ('ING' -> 'COMPLETE')
 		 *  	- wmd_order_work ('READY' -> 'COMPLETE')
-		 * 	5-3. 작업지시 (WMD_ORDER) 완료처리 함.
-		 * 	5-4. 작업지시그룹 (WMD_ORDER_GROUP) 완료처리 함.
+		 * 	5-3. 작업지시 (WMD_ORDER) 완료처리 함. ('ING' -> 'COMPLETE')
+		 * 	5-4. 작업지시그룹 (WMD_ORDER_GROUP) 완료처리 함. ('ING' -> 'COMPLETE')
+		 *  
 		 */			
 		
 		if(StringUtils.isEmpty(orderVO.getOrderGroupId())) {
